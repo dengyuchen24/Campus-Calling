@@ -1,11 +1,14 @@
 ﻿#include "sfWindow.h"
 
+#include "EscButton.h"
+
 extern std::map<std::string, sf::Font> g_Fonts;
 
 dyc::sfWindow::sfWindow(WndManager* m)
 {
 	if (m) { manager = m; window = m->GetWnd(); }
 	else { LOG_CERR("[ERROR] Creating sfWindow, wnd must not be nullptr."); }
+    AddObj(std::make_unique<EscButton>(), "EscButton");
 }
 
 void dyc::sfWindow::OnWhile()
@@ -15,16 +18,18 @@ void dyc::sfWindow::OnWhile()
 		// 1. 事件处理：轮询所有待处理的事件
 		while (const std::optional<sf::Event> event = window->pollEvent())
 		{
-			// 检查窗口关闭事件
-			if (event->is<sf::Event::Closed>())
-			{
-				window->close();
-			}
 			update(event);
 		}
 
 		// 2. 逻辑
 		logic();
+
+		// 退出按钮
+		auto escbutton = GetObjAs<EscButton>("EscButton");
+		if (escbutton->mouse_in && !escbutton->mouse_in_last)
+			escbutton->SetTextColor(sf::Color::Red);
+		else if (!escbutton->mouse_in && escbutton->mouse_in_last)
+			escbutton->SetTextColor(sf::Color::Black);
 
 		// 3. 渲染
 		window->clear(sf::Color::White);
@@ -55,7 +60,7 @@ WndObj* sfWindow::GetObj(const std::string& str)
 	for (auto& obj : objects)
 		if (obj->GetID() == obj_id_map.at(str))
 			return obj.get();
-	LOG_COUT("[WARNING] Object with str " << str << " not found!");
+	LOG_COUT("[ERROR] Object with str " << str << " not found!");
 	return nullptr;
 }
 
@@ -120,9 +125,9 @@ void WndButton::SetButtonPosition(sf::Vector2f leftup)
 		return;
 	}
 	rect->setPosition(leftup);
-	LOG_COUT("[INFO] Button position set successfully");
+	LOG_COUT("[PASS] Button position set successfully");
 	updateTextPosition();
-	LOG_COUT("[INFO] Button position update successfully");
+	LOG_COUT("[PASS] Button position update successfully");
 }
 
 void WndButton::SetButtonSize(sf::Vector2f size)
@@ -137,8 +142,8 @@ void WndButton::updateTextPosition()
 	// 设置文字在矩形中居中
 	LOG_COUT("[INFO] Updating text position...");
 	auto rect = GetAs<sf::RectangleShape>();
-	LOG_COUT("Get rect: " << rect);
-	LOG_COUT("Get text: " << mText);
+	LOG_COUT("[INFO] Get rect: " << rect);
+	LOG_COUT("[INFO] Get text: " << mText);
 	if (!rect || !mText)
 	{
 		LOG_COUT("[ERROR] WndButton::updateTextPosition() failed!");
@@ -153,14 +158,13 @@ void WndButton::updateTextPosition()
 		return;
 	}
 	sf::FloatRect textBounds = mText->getLocalBounds();
-	LOG_COUT("Get textBounds");
 	sf::Vector2f rectCenter = rect->getPosition() + rect->getSize() / 2.0f;
-	LOG_COUT("Before mText->setPosition() is ok.");
+	LOG_COUT("[INFO] Before mText->setPosition() is ok.");
 	mText->setPosition(sf::Vector2f(
 		rectCenter.x - textBounds.size.x / 2.0f - textBounds.position.x,
 		rectCenter.y - textBounds.size.y / 2.0f - textBounds.position.y
 	));
-	LOG_COUT("[INFO] Text position update successfully");
+	LOG_COUT("[PASS] Text position update successfully");
 }
 
 void WndButton::draw(sf::RenderWindow* wnd)

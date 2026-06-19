@@ -7,19 +7,21 @@ DYC_BEGIN
 StartGameButton::StartGameButton()
 	: WndButton(g_Fonts.at("default"))
 {
-	LOG_COUT("StartGameButton开始创建！");
+	LOG_COUT("[INFO] StartGameButton开始创建！");
 	mText->setString(L"出战 →");
-	LOG_COUT("设置文字内容为出战");
-	SetButtonSize({ 200.0f, 100.0f });
-	SetButtonPosition({ 50.0f, 50.0f });
-	LOG_COUT("设置位置成功");
+	LOG_COUT("[PASS] 设置文字内容为出战");
+	mText->setCharacterSize(40U);
+	mText->setStyle(sf::Text::Bold);
+	SetButtonSize({ 260.0f, 80.0f });
+	SetButtonPosition({ 1600.0f, 690.0f });
+	LOG_COUT("[PASS] 设置位置成功");
 	auto rect = GetAs<sf::RectangleShape>();
 	if (!rect)
 	{
-		LOG_COUT("创建失败");
+		LOG_COUT("[ERROR] 创建失败");
 		return;
 	}
-	rect->setFillColor(sf::Color::White);
+	rect->setFillColor(sf::Color::Cyan);
 	rect->setOutlineColor(sf::Color::Black);
 	rect->setOutlineThickness(3.0f);
 	SetTextColor(sf::Color::Black);

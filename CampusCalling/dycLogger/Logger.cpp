@@ -200,7 +200,7 @@ void dyc::Logger::ChangeFile(const std::string& newFilename)
 	// 关闭当前打开的文件
 	CloseFile();
 
-	LOG_COUT("Succeeded to change file to " << newFilename);
+	LOG_COUT("[PASS] Succeeded to change file to " << newFilename);
 
 	// 更新文件名
 	filename = newFilename;

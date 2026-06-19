@@ -14,8 +14,8 @@ int main()
 {
 	try
 	{
-		LOG_COUT("CampusCalling 项目成功启动！");
-		sf::RenderWindow window(sf::VideoMode({ 1920, 1080 }), "CampusCalling"/*, sf::State::Fullscreen*/);
+		LOG_COUT("[INFO] CampusCalling 项目成功启动！");
+		sf::RenderWindow window(sf::VideoMode({ 1920, 1080 }), "CampusCalling", sf::State::Fullscreen);
 		window.setVerticalSyncEnabled(true);
 
 		g_Fonts["default"] = sf::Font("C:/Windows/Fonts/Deng.ttf");  // 使用等线为默认字体
@@ -25,11 +25,11 @@ int main()
 		g_WndManager.SetRunning(g_WndManager.GetSfWnd()->at("preparation window").get());
 
 		g_WndManager.run();
-		LOG_COUT("CampusCalling 项目退出...");
+		LOG_COUT("[INFO] CampusCalling 项目退出...");
 	}
 	catch (const std::exception& e)
 	{
-		LOG_CERR("Main function error: " << e.what());
+		LOG_CERR("[ERROR] Main function error: " << e.what());
 		return -1;
 	}
 	return 0;

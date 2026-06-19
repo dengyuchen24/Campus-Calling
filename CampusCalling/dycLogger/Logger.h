@@ -15,7 +15,7 @@
 #ifndef NCONSOLE
 	#include <iostream>
 	// 绝对不允许使用逗号，否则加括号或报错
-	#define LOG_COUT(msg) std::cout << "-> " <<  msg << "\n"
+	#define LOG_COUT(msg) std::cout << "-> " << msg << "\n"
 	#define LOG_CERR(msg) std::cerr << "-> " << msg << "\n"
 #else
 	#define LOG_COUT(msg) ((void)0)

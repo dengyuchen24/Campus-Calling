@@ -43,7 +43,7 @@ add_executable (CampusCalling
 	"WndManager/wndManager/PreparationWnd/Preparation.h"
 	"WndManager/wndManager/PreparationWnd/StartGameButton.h"
 	"WndManager/wndManager/PreparationWnd/StartGameButton.cpp"
-)
+ "WndManager/EscButton.h" "WndManager/EscButton.cpp")
 
 # -------------------------- 包含目录--------------------------
 # 使用 target_include_directories 为当前目标设置头文件路径
@@ -67,19 +67,6 @@ target_link_libraries(CampusCalling PRIVATE
 	sfml-audio${SFML_SUFFIX}
 	sfml-network${SFML_SUFFIX}
 )
-
-# 可选：将 SFML 的 dll 复制到输出目录（Windows 必备）
-if (WIN32)
-	# 复制 Release 版本 dll
-	file(GLOB SFML_RELEASE_DLLS "${SFML_ROOT}/bin/*.dll")
-	list(FILTER SFML_RELEASE_DLLS EXCLUDE REGEX "-d.dll$")
-	foreach(DLL ${SFML_RELEASE_DLLS})
-		add_custom_command(TARGET CampusCalling POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy_if_different
-			${DLL} $<TARGET_FILE_DIR:CampusCalling>
-		)
-	endforeach()
-endif()
 
 # 适配 CMake 版本的 CXX_STANDARD 属性（原有逻辑保留）
 if (CMAKE_VERSION VERSION_GREATER 3.12)
