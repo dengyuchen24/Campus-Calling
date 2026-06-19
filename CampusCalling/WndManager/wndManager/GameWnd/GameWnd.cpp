@@ -69,7 +69,8 @@ namespace dyc
 		AddObj(std::move(obj), "ActionQueue");
 		LOG_COUT("success add obj actionqueue");
 		
-		// TODO: 添加角色为绘制对象
+		// TODO: 修改为根据students和teacters来生成角色绘制对象
+		// 添加角色为绘制对象
 		auto cai_ptr = std::make_unique<CaiShuYou>();
 		AddObj(std::move(cai_ptr), "蔡曙优"); // 传入智能指针，无切片
 

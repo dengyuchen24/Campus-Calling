@@ -11,8 +11,9 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 
 	// 开始游戏按钮
 	AddObj(std::make_unique<StartGameButton>(), "StartGameButton");
-	LOG_COUT("按钮图形已创建");
 	LOG_COUT("开始游戏按钮初始化完毕！");
+
+	// TODO: 添加商店（购买卡牌）、备战席等元素
 
 	LOG_COUT("PreparationWnd 初始化完毕！");
 }

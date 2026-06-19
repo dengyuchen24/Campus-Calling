@@ -3,6 +3,6 @@
 
 #pragma once
 
-// TODO: 在此处引用程序需要的标头。
+// 在此处引用程序需要的标头。
 
 #include "WndManager/sfWindow.h"
