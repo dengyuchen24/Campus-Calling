@@ -9,7 +9,8 @@ namespace dyc
 	public:
 		CaiShuYou()
 		{
-			if (!SetTexture("E:/dd/FILES/图像/GS/丝柯克.png"))
+			// 这里也是直接找了一张丝柯克的图片代替一下
+			if (!SetTexture("Assets/Pictures/丝柯克.png"))
 			{
 				LOG_COUT("CaiShuYou::CaiShuYou() 载入图像失败！");
 				return;

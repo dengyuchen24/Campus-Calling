@@ -35,7 +35,7 @@ void dyc::sfWindow::OnWhile()
 
 DYC_BEGIN
 
-bool WndCard::SetTexture(const std::string& path)
+bool WndCard::SetTexture(const std::filesystem::path& path)
 {
 	if (!texture.loadFromFile(path))
 	{

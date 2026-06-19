@@ -78,7 +78,7 @@ namespace dyc
 	public:
 		using WndObj::WndObj;
 		
-		bool SetTexture(const std::string& path);  // 设置纹理
+		bool SetTexture(const std::filesystem::path& path);  // 设置纹理
 
 		bool SetPosition(sf::Vector2f leftup);  // 设置纹理位置
 
