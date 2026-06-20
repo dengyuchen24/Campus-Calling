@@ -1,6 +1,7 @@
 ﻿#include "Preparation.h"
 
 #include "StartGameButton.h"
+#include "ShopSystem.h"
 
 DYC_BEGIN
 
@@ -14,6 +15,10 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 	LOG_COUT("[PASS] 开始游戏按钮初始化完毕！");
 
 	// TODO: 添加商店（购买卡牌）、备战席等元素
+
+	// 商店
+	AddObj(std::make_unique<ShopSystem>(), "ShopSystem");
+	LOG_COUT("[PASS] 商店初始化完毕！");
 
 	LOG_COUT("[PASS] PreparationWnd 初始化完毕！");
 }

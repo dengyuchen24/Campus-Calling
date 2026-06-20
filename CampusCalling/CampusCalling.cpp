@@ -15,10 +15,11 @@ int main()
 	try
 	{
 		LOG_COUT("[INFO] CampusCalling 项目成功启动！");
+		logger.log_info("CampusCalling 游戏程序启动！");
 		sf::RenderWindow window(sf::VideoMode({ 1920, 1080 }), "CampusCalling", sf::State::Fullscreen);
 		window.setVerticalSyncEnabled(true);
 
-		g_Fonts["default"] = sf::Font("C:/Windows/Fonts/Deng.ttf");  // 使用等线为默认字体
+		g_Fonts["default"] = sf::Font("Assets/Fonts/Deng.ttf");  // 使用等线为默认字体
 
 		g_WndManager.SetWindow(&window);
 		g_WndManager.AddSfWnd("preparation window", std::make_unique<dyc::PreparationWnd>(&g_WndManager));
@@ -26,6 +27,7 @@ int main()
 
 		g_WndManager.run();
 		LOG_COUT("[INFO] CampusCalling 项目退出...");
+		logger.log_info("CampusCalling 游戏程序退出！");
 	}
 	catch (const std::exception& e)
 	{

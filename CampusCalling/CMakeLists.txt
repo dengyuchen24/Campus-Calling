@@ -43,7 +43,11 @@ add_executable (CampusCalling
 	"WndManager/wndManager/PreparationWnd/Preparation.h"
 	"WndManager/wndManager/PreparationWnd/StartGameButton.h"
 	"WndManager/wndManager/PreparationWnd/StartGameButton.cpp"
- "WndManager/EscButton.h" "WndManager/EscButton.cpp")
+	"WndManager/EscButton.h"
+	"WndManager/EscButton.cpp"
+	"WndManager/wndManager/PreparationWnd/ShopSystem.cpp"
+	"WndManager/wndManager/PreparationWnd/ShopSystem.h"
+)
 
 # -------------------------- 包含目录--------------------------
 # 使用 target_include_directories 为当前目标设置头文件路径
