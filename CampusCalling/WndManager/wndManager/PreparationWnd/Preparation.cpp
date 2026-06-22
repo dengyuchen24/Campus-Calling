@@ -2,6 +2,8 @@
 
 #include "StartGameButton.h"
 #include "ShopSystem.h"
+#include "OpenShopButton.h"
+#include "ShopRefreshButton.h"
 
 DYC_BEGIN
 

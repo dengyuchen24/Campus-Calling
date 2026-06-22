@@ -1,4 +1,5 @@
 ﻿#include "ShopSystem.h"
+#include "../../../Helper.h"
 
 extern dyc::Logger& logger;
 extern dyc::WndManager g_WndManager;
@@ -39,11 +40,25 @@ void SellingCard::draw(sf::RenderWindow* wnd)
 
 ShopSystem::ShopSystem() : WndObj()
 {
+	SetDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(1220.0f, 300.0f)));
+	auto r = GetAs<sf::RectangleShape>();
+	if (!r)
+	{
+		LOG_COUT("[ERROR] ShopSystem: Failed to get drawable!");
+		return;
+	}
+	r->setPosition(sf::Vector2f(350.0f, 100.0f));
+	r->setFillColor(sf::Color::Transparent);
+	r->setOutlineThickness(5.0f);
+	r->setOutlineColor(sf::Color::Black);
+	LOG_COUT("[PASS] ShopSystem: Created!");
 
 }
 
 void ShopSystem::draw(sf::RenderWindow* wnd)
 {
+	if (!mIsOpen) return;
+    WndObj::draw(wnd);
 	for (auto& obj : mCards)
 	{
 		obj->draw(wnd);
@@ -57,7 +72,15 @@ void ShopSystem::SetOpen(bool open)
 
 void ShopSystem::Refresh()
 {
+	for (int i = 0; i < 5; ++i)
+	{
+		// TODO: 把随机取改为按权重
+		std::wstring name = RandomElement(mCardPool);
 
+		mCards[i]->SetTexture(Path(L"Assets/Pictures/" + name + L".png"));
+		mCards[i]->SetPosition(sf::Vector2f(i * 100.0f, 0.0f));
+		LOG_COUT("[DEBUG] Card " << (1 + i) << ": " << WStrToStr(name));
+	}
 }
 
 DYC_END

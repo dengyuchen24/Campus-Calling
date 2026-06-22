@@ -27,6 +27,8 @@
 
 namespace dyc
 {
+	using Path = std::filesystem::path;
+
 	// 日志类
 	class Logger
 	{
