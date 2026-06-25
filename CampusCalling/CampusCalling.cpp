@@ -1,5 +1,7 @@
 ﻿// CampusCalling.cpp: 定义应用程序的入口点。
 // 在Logger.h中定义NCONSOLE是否启用控制台输出
+// 在CMakeLists.txt中修改自己的SFML库的位置
+// 需要自行将SFML的dll库复制到exe文件的同目录下
 //
 
 #include "CampusCalling.h"

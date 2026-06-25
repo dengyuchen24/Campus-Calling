@@ -22,6 +22,10 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 	AddObj(std::make_unique<ShopSystem>(), "ShopSystem");
 	LOG_COUT("[PASS] 商店初始化完毕！");
 
+    // 添加商店刷新按钮
+    AddObj(std::make_unique<ShopRefreshButton>(), "ShopRefreshButton");
+	LOG_COUT("[PASS] 商店刷新按钮初始化完毕！");
+
 	LOG_COUT("[PASS] PreparationWnd 初始化完毕！");
 }
 
@@ -35,6 +39,15 @@ void PreparationWnd::logic()
 	else if (!startgamebutton->mouse_in && startgamebutton->mouse_in_last)
 		startgamebutton->GetAs<sf::RectangleShape>()
 		->setFillColor(sf::Color::Cyan);
+
+	// 商店刷新按钮
+	auto shoprefreshbutton = GetObjAs<ShopRefreshButton>("ShopRefreshButton");
+	if (shoprefreshbutton->mouse_in && !shoprefreshbutton->mouse_in_last)
+		shoprefreshbutton->GetAs<sf::RectangleShape>()
+		->setFillColor(sf::Color(240, 240, 240));
+	else if (!shoprefreshbutton->mouse_in && shoprefreshbutton->mouse_in_last)
+		shoprefreshbutton->GetAs<sf::RectangleShape>()
+		->setFillColor(sf::Color::White);
 }
 
 DYC_END

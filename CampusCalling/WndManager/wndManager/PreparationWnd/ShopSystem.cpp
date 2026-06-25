@@ -51,6 +51,15 @@ ShopSystem::ShopSystem() : WndObj()
 	r->setFillColor(sf::Color::Transparent);
 	r->setOutlineThickness(5.0f);
 	r->setOutlineColor(sf::Color::Black);
+
+	mCardPool[L"丝柯克"] = 5;
+
+	for (int i = 0; i < 5; ++i)
+	{
+		// TODO: 完成初始化商店中的卡牌
+		// mCards.push_back(std::make_unique<SellingCard>(5, L"丝柯克"));
+	}
+
 	LOG_COUT("[PASS] ShopSystem: Created!");
 
 }

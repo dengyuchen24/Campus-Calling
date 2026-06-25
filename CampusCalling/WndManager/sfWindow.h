@@ -48,14 +48,16 @@ namespace dyc
 		}
 
 		// 检查是否为鼠标移动事件
-		if (event->is<sf::Event::MouseMoved>())
+		if (event->is<sf::Event::MouseButtonPressed>())
 		{
-			return event->getIf<sf::Event::MouseMoved>()->position;
+			auto& p = event->getIf<sf::Event::MouseButtonPressed>()->position;
+			return p;
 		}
 		// 检查是否为鼠标按下事件
-		else if (event->is<sf::Event::MouseButtonPressed>())
+		else if (event->is<sf::Event::MouseMoved>())
 		{
-			return event->getIf<sf::Event::MouseButtonPressed>()->position;
+			auto& p = event->getIf<sf::Event::MouseMoved>()->position;
+			return p;
 		}
 		// 其他事件类型或不支持的事件
 		else

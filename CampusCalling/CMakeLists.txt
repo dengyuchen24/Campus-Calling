@@ -47,7 +47,12 @@ add_executable (CampusCalling
 	"WndManager/EscButton.cpp"
 	"WndManager/wndManager/PreparationWnd/ShopSystem.cpp"
 	"WndManager/wndManager/PreparationWnd/ShopSystem.h"
- "Helper.h" "WndManager/wndManager/PreparationWnd/OpenShopButton.h" "WndManager/wndManager/PreparationWnd/OpenShopButton.cpp" "WndManager/wndManager/PreparationWnd/ShopRefreshButton.h" "WndManager/wndManager/PreparationWnd/ShopRefreshButton.cpp")
+	"Helper.h"
+	"WndManager/wndManager/PreparationWnd/OpenShopButton.h"
+	"WndManager/wndManager/PreparationWnd/OpenShopButton.cpp"
+	"WndManager/wndManager/PreparationWnd/ShopRefreshButton.h"
+	"WndManager/wndManager/PreparationWnd/ShopRefreshButton.cpp"
+)
 
 # -------------------------- 包含目录--------------------------
 # 使用 target_include_directories 为当前目标设置头文件路径
@@ -71,6 +76,8 @@ target_link_libraries(CampusCalling PRIVATE
 	sfml-audio${SFML_SUFFIX}
 	sfml-network${SFML_SUFFIX}
 )
+
+# set_target_properties(CampusCalling PROPERTIES WIN32_EXECUTABLE TRUE)
 
 # 适配 CMake 版本的 CXX_STANDARD 属性（原有逻辑保留）
 if (CMAKE_VERSION VERSION_GREATER 3.12)
