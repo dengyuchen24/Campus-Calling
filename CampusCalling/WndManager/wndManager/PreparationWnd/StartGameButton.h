@@ -2,7 +2,7 @@
 
 #include "Preparation.h"
 
-extern dyc::WndManager g_WndManager;
+extern dyc::WndManager* g_WndManager;
 
 DYC_BEGIN
 

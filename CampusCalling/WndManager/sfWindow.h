@@ -230,6 +230,11 @@ namespace dyc
 		}
 		
 		void SetWindow(sf::RenderWindow* w) { window = w; }
+
+		void clear()
+		{
+			m_windows.clear();
+		}
 	};
 }
 

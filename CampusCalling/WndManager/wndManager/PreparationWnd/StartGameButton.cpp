@@ -36,9 +36,9 @@ void StartGameButton::update(const std::optional<sf::Event>& event)
 		sf::FloatRect r = rect->getGlobalBounds();
 		if (PointInRect(mouse_pos, r))
 		{
-			if (!g_WndManager.GetSfWnd()->contains("game window"))
-				g_WndManager.AddSfWnd("game window", std::make_unique<dyc::GameWnd>(&g_WndManager));
-			g_WndManager.SetRunning(g_WndManager.GetSfWnd()->at("game window").get());
+			if (!g_WndManager->GetSfWnd()->contains("game window"))
+				g_WndManager->AddSfWnd("game window", std::make_unique<dyc::GameWnd>(g_WndManager));
+			g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("game window").get());
 		}
 	}
 	else if (event->is<sf::Event::MouseMoved>())

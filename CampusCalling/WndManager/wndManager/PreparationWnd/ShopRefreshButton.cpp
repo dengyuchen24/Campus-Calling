@@ -3,7 +3,7 @@
 #include "ShopSystem.h"
 
 extern dyc::Logger& logger;
-extern dyc::WndManager g_WndManager;
+extern dyc::WndManager* g_WndManager;
 extern std::map<std::string, sf::Font> g_Fonts;
 
 DYC_BEGIN
@@ -44,7 +44,7 @@ void ShopRefreshButton::update(const std::optional<sf::Event>& event)
 	{
 		if (PointInRect(p, bounds))
 		{
-			g_WndManager.running_wnd
+			g_WndManager->running_wnd
 				->GetObjAs<ShopSystem>("ShopSystem")->Refresh();
 		}
 	}

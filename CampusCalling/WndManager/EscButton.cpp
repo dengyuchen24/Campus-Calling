@@ -1,7 +1,7 @@
 ﻿#include "EscButton.h"
 
 extern std::map<std::string, sf::Font> g_Fonts;
-extern dyc::WndManager g_WndManager;
+extern dyc::WndManager* g_WndManager;
 
 DYC_BEGIN
 
@@ -32,8 +32,8 @@ void EscButton::update(const std::optional<sf::Event>& event)
 	{
 		if (!mouse_in)
 			return;
-		g_WndManager.GetWnd()->close();
-		g_WndManager.SetRunning(nullptr);
+		g_WndManager->GetWnd()->close();
+		g_WndManager->SetRunning(nullptr);
         LOG_COUT("[INFO] 已退出游戏");
 	}
 	else if (event->is<sf::Event::MouseMoved>())

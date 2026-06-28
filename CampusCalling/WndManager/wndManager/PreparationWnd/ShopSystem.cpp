@@ -2,38 +2,85 @@
 #include "../../../Helper.h"
 
 extern dyc::Logger& logger;
-extern dyc::WndManager g_WndManager;
+extern dyc::WndManager* g_WndManager;
 extern std::map<std::string, sf::Font> g_Fonts;
+extern int g_Coins;
 
 DYC_BEGIN
 
 // SellingCard
 
-SellingCard::SellingCard(int cost, const std::wstring& name)
-	: WndCard(), mCost(cost), mName(name)
+SellingCard::SellingCard(int cost, const std::wstring& name, int i)
+	: WndCard(), index(i), mCost(cost)
 {
-	mText = std::make_unique<sf::Text>(g_Fonts.at("default"), name);
+	set(cost, name, i);
+}
+
+void SellingCard::set(int cost, const std::wstring& name, int i)
+{
+	mName = name;
+	mText = std::make_unique<sf::Text>(g_Fonts.at("default"), std::wstring(L"$" + std::to_wstring(cost) + L" " + name));
+	mText->setFillColor(sf::Color::White);
+	mText->setOutlineColor(sf::Color::Black);
+	mText->setOutlineThickness(1.0f);
+	mText->setPosition(sf::Vector2f(i * 236.67f + 386.67f, 125.0f));
+	mText->setCharacterSize(20U);
+	SetTexture(L"Assets/Pictures/" + name + L".png");
+	SetDrawable(std::make_unique<sf::Sprite>(texture));
+	mScale = 0.5f;
+	SetScale(mScale, mScale);
+	SetPosition(sf::Vector2f(i * 236.67f + 386.67f, 125.0f));
+	SetBorder(2.0f, sf::Color::Black);
 }
 
 void SellingCard::draw(sf::RenderWindow* wnd)
 {
 	WndCard::draw(wnd);
-
-	static std::filesystem::path pic_path(L"Assets/Pictures/" + mName + L".png");
-	static sf::Texture pic_texture(pic_path);
-	static sf::Sprite pic(pic_texture);
-
-	wnd->draw(pic);
-
-	static sf::RectangleShape rect(sf::Vector2f(100.f, 100.f));
-	static bool init = false;
-	if (!init)
-	{
-		init = true;
-		rect.setFillColor(sf::Color(50, 50, 50));
-	}
-
 	wnd->draw(*mText);
+}
+
+void SellingCard::update(const std::optional<sf::Event>& event)
+{
+
+	if (!event.has_value()) return;
+
+	last_in = now_in;
+
+	if (event->is<sf::Event::MouseMoved>())
+	{
+		sf::Vector2i pos = GetMousePos(event);
+		auto rect = border.getGlobalBounds();
+		if (PointInRect(pos, rect))
+		{
+			now_in = true;
+		}
+		else
+		{
+			now_in = false;
+		}
+		if (now_in && !last_in && !sold)
+		{
+			border.setOutlineColor(sf::Color::Transparent);
+		}
+		else if (!now_in && last_in)
+		{
+			border.setOutlineColor(sf::Color::Black);
+		}
+	}
+	else if (event->is<sf::Event::MouseButtonPressed>())
+	{
+		sf::Vector2i pos = GetMousePos(event);
+		if (now_in)
+		{
+			if (g_Coins < mCost) return;
+			set(0, L"sold", index);
+			mText->setString(L"Has been sold~");
+			mText->setOutlineColor(sf::Color::Transparent);
+			mText->setFillColor(sf::Color::Black);
+			sold = true;
+			g_Coins -= mCost;
+		}
+	}
 }
 
 // ShopSystem
@@ -52,12 +99,13 @@ ShopSystem::ShopSystem() : WndObj()
 	r->setOutlineThickness(5.0f);
 	r->setOutlineColor(sf::Color::Black);
 
-	mCardPool[L"丝柯克"] = 5;
+	mCardPool[L"丝柯克"] = 10;
 
 	for (int i = 0; i < 5; ++i)
 	{
 		// TODO: 完成初始化商店中的卡牌
-		// mCards.push_back(std::make_unique<SellingCard>(5, L"丝柯克"));
+		mCardCost[L"丝柯克"] = 5;
+		mCards.push_back(std::make_unique<SellingCard>(5, L"丝柯克", i));
 	}
 
 	LOG_COUT("[PASS] ShopSystem: Created!");
@@ -81,14 +129,26 @@ void ShopSystem::SetOpen(bool open)
 
 void ShopSystem::Refresh()
 {
+	if (mCardPool.empty())
+	{
+		LOG_COUT("[WARNING] mCardPool is empty!");
+		return;
+	}
 	for (int i = 0; i < 5; ++i)
 	{
 		// TODO: 把随机取改为按权重
 		std::wstring name = RandomElement(mCardPool);
 
-		mCards[i]->SetTexture(Path(L"Assets/Pictures/" + name + L".png"));
-		mCards[i]->SetPosition(sf::Vector2f(i * 100.0f, 0.0f));
-		LOG_COUT("[DEBUG] Card " << (1 + i) << ": " << WStrToStr(name));
+		mCards[i]->set(mCardCost[name], name, i);
+	}
+	LOG_COUT("[INFO] Shop refreshed!");
+}
+
+void ShopSystem::update(const std::optional<sf::Event>& event)
+{
+	for (auto& c : mCards)
+	{
+		c->update(event);
 	}
 }
 

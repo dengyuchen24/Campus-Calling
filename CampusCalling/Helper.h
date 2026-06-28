@@ -1,42 +1,13 @@
-#pragma once
+﻿#pragma once
 
 #include "dycLogger/Logger.h"
 #include <random>
 #include <map>
 #include <stdexcept>
-#include <string>
-#include <Windows.h>
 
 DYC_BEGIN
 
 constexpr sf::Vector2i nullvec2i = sf::Vector2i(-1, -1);
-
-// 使用 Windows API 将 std::wstring 转换为 UTF-8 编码的 std::string
-inline std::string WStrToStr(const std::wstring& wstr)
-{
-	if (wstr.empty())
-	{
-		return "";
-	}
-
-	// 计算所需缓冲区大小
-	int size_needed = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), NULL, 0, NULL, NULL);
-	if (size_needed <= 0)
-	{
-		return "";
-	}
-
-	// 分配缓冲区并执行转换
-	std::string str(size_needed, 0);
-	int result = WideCharToMultiByte(CP_UTF8, 0, &wstr[0], (int)wstr.size(), &str[0], size_needed, NULL, NULL);
-
-	if (result <= 0)
-	{
-		return "";
-	}
-
-	return str;
-}
 
 // 获取指定范围的随机整数
 inline int randint(int a, int b) {

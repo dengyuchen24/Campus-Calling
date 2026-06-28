@@ -185,7 +185,7 @@ void WndCard::SetBorder(float thickness, sf::Color color)
     border.setOutlineThickness(thickness);
 	border.setOutlineColor(color);
     border.setFillColor(sf::Color::Transparent);
-	border.setSize(GetAs<sf::Sprite>()->getLocalBounds().size);
+	border.setSize(GetAs<sf::Sprite>()->getGlobalBounds().size);
 	border.setPosition(GetAs<sf::Sprite>()->getPosition());
 }
 
