@@ -10,6 +10,9 @@
 
 namespace dyc
 {
+	using MouseMoved = sf::Event::MouseMoved;
+	using MouseButtonPressed = sf::Event::MouseButtonPressed;
+
 	/**
 	 * @brief 检查一个二维整数点是否位于给定的浮点数矩形区域内。
 	 *
@@ -167,10 +170,7 @@ namespace dyc
 				pObj->draw(window);
 		}
 		
-		void update(const std::optional<sf::Event>& event)
-		{
-			for (auto& obj : objects) obj->update(event);
-		}
+		void update(const std::optional<sf::Event>& event);
 		
 		virtual void logic() {};
 
@@ -226,7 +226,10 @@ namespace dyc
 		
 		void run()
 		{
-			while (window->isOpen() && running_wnd) { running_wnd->OnWhile(); }
+			while (window->isOpen() && running_wnd)
+			{
+				running_wnd->OnWhile();
+			}
 		}
 		
 		void SetWindow(sf::RenderWindow* w) { window = w; }

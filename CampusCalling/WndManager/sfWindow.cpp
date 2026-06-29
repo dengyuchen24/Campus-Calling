@@ -21,8 +21,11 @@ void dyc::sfWindow::OnWhile()
 			update(event);
 		}
 
+		if (manager->running_wnd != this) break;
 		// 2. 逻辑
 		logic();
+
+		if (manager->running_wnd != this) break;
 
 		// 退出按钮
 		auto escbutton = GetObjAs<EscButton>("EscButton");
@@ -177,7 +180,7 @@ WndButton::WndButton(const sf::Font& font) : WndObj()
 {
 	SetDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(100, 50)));
 	mText = std::make_unique<sf::Text>(font);
-	mText->setString("BUTTON");
+	mText->setString(L"按钮");
 }
 
 void WndCard::SetBorder(float thickness, sf::Color color)
@@ -193,6 +196,15 @@ void WndCard::draw(sf::RenderWindow* wnd)
 {
 	wnd->draw(*drawable);
 	wnd->draw(border);
+}
+
+void sfWindow::update(const std::optional<sf::Event>& event)
+{
+	for (auto& obj : objects)
+	{
+		if (manager->running_wnd != this) break;
+		obj->update(event);
+	}
 }
 
 DYC_END

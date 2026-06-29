@@ -16,7 +16,7 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 	AddObj(std::make_unique<StartGameButton>(), "StartGameButton");
 	LOG_COUT("[PASS] 开始游戏按钮初始化完毕！");
 
-	// TODO: 添加商店（购买卡牌）、备战席等元素
+	// TODO: 备战席等元素
 
 	// 商店
 	AddObj(std::make_unique<ShopSystem>(), "ShopSystem");
@@ -25,6 +25,10 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
     // 添加商店刷新按钮
     AddObj(std::make_unique<ShopRefreshButton>(), "ShopRefreshButton");
 	LOG_COUT("[PASS] 商店刷新按钮初始化完毕！");
+
+	// 商店开关按钮
+	AddObj(std::make_unique<OpenShopButton>(), "OpenShopButton");
+	LOG_COUT("[PASS] 商店开关按钮初始化完毕！");
 
 	LOG_COUT("[PASS] PreparationWnd 初始化完毕！");
 }

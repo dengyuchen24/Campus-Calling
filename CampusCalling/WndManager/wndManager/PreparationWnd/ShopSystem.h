@@ -1,5 +1,4 @@
-﻿// TODO: 完成ShopSystem
-#pragma once
+﻿#pragma once
 
 #include "../../../Characters/character.h"
 
@@ -43,6 +42,8 @@ public:
 	void draw(sf::RenderWindow* wnd) override;
 
 	void SetOpen(bool open);  // 设置是否开启
+
+	bool GetOpen() { return mIsOpen; }
 
 	void Refresh();  // 刷新商店
 

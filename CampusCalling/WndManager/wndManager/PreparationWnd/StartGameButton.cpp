@@ -38,6 +38,7 @@ void StartGameButton::update(const std::optional<sf::Event>& event)
 		{
 			if (!g_WndManager->GetSfWnd()->contains("game window"))
 				g_WndManager->AddSfWnd("game window", std::make_unique<dyc::GameWnd>(g_WndManager));
+			LOG_COUT("[DEBUG] Game Wnd: " << g_WndManager->GetSfWnd()->at("game window").get());
 			g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("game window").get());
 		}
 	}

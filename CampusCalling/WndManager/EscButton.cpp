@@ -30,9 +30,7 @@ void EscButton::update(const std::optional<sf::Event>& event)
 {
 	if (event->is<sf::Event::MouseButtonPressed>())
 	{
-		if (!mouse_in)
-			return;
-		g_WndManager->GetWnd()->close();
+		if (!mouse_in) return;
 		g_WndManager->SetRunning(nullptr);
         LOG_COUT("[INFO] 已退出游戏");
 	}

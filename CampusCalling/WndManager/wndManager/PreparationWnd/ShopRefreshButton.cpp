@@ -33,6 +33,8 @@ ShopRefreshButton::ShopRefreshButton()
 
 void ShopRefreshButton::update(const std::optional<sf::Event>& event)
 {
+	if (!g_WndManager->running_wnd
+		->GetObjAs<ShopSystem>("ShopSystem")->GetOpen()) return;
 	static bool last_mouse_in = false;
 	mouse_in_last = last_mouse_in;
 	auto p = GetMousePos(event);
@@ -59,6 +61,13 @@ void ShopRefreshButton::update(const std::optional<sf::Event>& event)
 		mouse_in = false;
 		last_mouse_in = false;
 	}
+}
+
+void ShopRefreshButton::draw(sf::RenderWindow* wnd)
+{
+	if (!g_WndManager->running_wnd
+		->GetObjAs<ShopSystem>("ShopSystem")->GetOpen()) return;
+	WndButton::draw(wnd);
 }
 
 DYC_END

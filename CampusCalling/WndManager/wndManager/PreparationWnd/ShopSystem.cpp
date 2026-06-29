@@ -1,4 +1,5 @@
 ﻿#include "ShopSystem.h"
+#include "OpenShopButton.h"
 #include "../../../Helper.h"
 
 extern dyc::Logger& logger;
@@ -19,6 +20,7 @@ SellingCard::SellingCard(int cost, const std::wstring& name, int i)
 void SellingCard::set(int cost, const std::wstring& name, int i)
 {
 	mName = name;
+	mText.reset(nullptr);
 	mText = std::make_unique<sf::Text>(g_Fonts.at("default"), std::wstring(L"$" + std::to_wstring(cost) + L" " + name));
 	mText->setFillColor(sf::Color::White);
 	mText->setOutlineColor(sf::Color::Black);
@@ -41,7 +43,8 @@ void SellingCard::draw(sf::RenderWindow* wnd)
 
 void SellingCard::update(const std::optional<sf::Event>& event)
 {
-
+	if (!g_WndManager->running_wnd
+		->GetObjAs<ShopSystem>("ShopSystem")->GetOpen()) return;
 	if (!event.has_value()) return;
 
 	last_in = now_in;
@@ -79,6 +82,10 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 			mText->setFillColor(sf::Color::Black);
 			sold = true;
 			g_Coins -= mCost;
+			g_WndManager->running_wnd
+				->GetObjAs<OpenShopButton>("OpenShopButton")->refresh();
+			// TODO: 添加卡池减少一张牌，保证mCardPool中至少有一张牌
+			// TODO: 把购买的卡牌转移到玩家拥有
 		}
 	}
 }
@@ -129,6 +136,14 @@ void ShopSystem::SetOpen(bool open)
 
 void ShopSystem::Refresh()
 {
+	if (g_Coins < 2)
+	{
+		LOG_COUT("[MESSAGE] 金币不足");
+		return;
+	}
+	g_Coins -= 2;
+	g_WndManager->running_wnd
+		->GetObjAs<OpenShopButton>("OpenShopButton")->refresh();
 	if (mCardPool.empty())
 	{
 		LOG_COUT("[WARNING] mCardPool is empty!");

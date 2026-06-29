@@ -23,15 +23,13 @@ int main()
 		g_WndManager = new dyc::WndManager();
 		g_Fonts["default"] = sf::Font("Assets/Fonts/Deng.ttf");  // 使用等线为默认字体
 
-		{
-			g_WndManager->SetWindow(&window);
-			g_WndManager->AddSfWnd("preparation window", std::make_unique<dyc::PreparationWnd>(g_WndManager));
-			g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("preparation window").get());
+		g_WndManager->SetWindow(&window);
+		g_WndManager->AddSfWnd("preparation window", std::make_unique<dyc::PreparationWnd>(g_WndManager));
+		g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("preparation window").get());
 
-			g_WndManager->run();
-		}
-		g_Fonts.clear();                             // 释放字体
-		if (window.isOpen()) window.close();     
+		g_WndManager->run();
+
+		if (window.isOpen()) window.close();
 		LOG_COUT("[INFO] CampusCalling 项目退出..."); // 最后关闭窗口
 		logger.log_info("CampusCalling 游戏程序退出！");
 	}
