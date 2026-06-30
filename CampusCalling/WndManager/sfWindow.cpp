@@ -1,8 +1,9 @@
 ﻿#include "sfWindow.h"
-
+#include "../Helper.h"
 #include "EscButton.h"
 
 extern std::map<std::string, sf::Font> g_Fonts;
+extern dyc::Message* g_Message;
 
 dyc::sfWindow::sfWindow(WndManager* m)
 {
@@ -13,6 +14,15 @@ dyc::sfWindow::sfWindow(WndManager* m)
 
 void dyc::sfWindow::OnWhile()
 {
+	static dyc::Timer<low_rClock> timer;
+	static bool init = false;
+	static bool isMsgEmpty = true;
+	if (!init)
+	{
+		init = true;
+		timer.start();
+	}
+
 	while (manager->running_wnd == this && window->isOpen())
 	{
 		// 1. 事件处理：轮询所有待处理的事件
@@ -27,6 +37,11 @@ void dyc::sfWindow::OnWhile()
 
 		if (manager->running_wnd != this) break;
 
+		// 3. 渲染
+		window->clear(sf::Color::White);
+
+		draw();
+
 		// 退出按钮
 		auto escbutton = GetObjAs<EscButton>("EscButton");
 		if (escbutton->mouse_in && !escbutton->mouse_in_last)
@@ -34,9 +49,22 @@ void dyc::sfWindow::OnWhile()
 		else if (!escbutton->mouse_in && escbutton->mouse_in_last)
 			escbutton->SetTextColor(sf::Color::Black);
 
-		// 3. 渲染
-		window->clear(sf::Color::White);
-		draw();
+		if (!g_Message->empty())
+		{
+			timer.stop();
+			if (timer.elapsed_sec() >= 1LL && !isMsgEmpty)
+			{
+				g_Message->Next();
+				timer.start();
+			}
+			else if (isMsgEmpty)
+			{
+				g_Message->setString();
+				timer.start();
+			}
+			g_Message->draw(window);
+			isMsgEmpty = g_Message->empty();
+		}
 		window->display();
 	}
 }

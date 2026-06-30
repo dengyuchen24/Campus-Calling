@@ -7,6 +7,9 @@
 #include <memory>
 #include <string>
 #include <type_traits>
+#include <queue>
+
+extern std::map<std::string, sf::Font> g_Fonts;  // 字体变量
 
 namespace dyc
 {
@@ -237,6 +240,60 @@ namespace dyc
 		void clear()
 		{
 			m_windows.clear();
+		}
+	};
+
+	class Message
+	{
+	private:
+		std::queue<std::wstring> messages;
+		std::unique_ptr<sf::Text> text;
+	public:
+		Message() : text(std::make_unique<sf::Text>(g_Fonts["default"]))
+		{
+			text->setFillColor(sf::Color::Red);
+			text->setCharacterSize(20U);
+		}
+
+		void NewMsg(std::wstring msg)
+		{
+			if (!messages.empty() && messages.back() == msg) return;
+			messages.push(msg);
+		}
+		std::wstring GetMsg() const
+		{
+			if (messages.empty())
+			{
+				return L"";
+			}
+			return messages.front();
+		}
+		void setString() { text->setString(GetMsg()); ResetPos(); }
+		void DelTop() { messages.pop(); }
+		bool empty() { return messages.empty(); }
+
+		void Next()
+		{
+			if (empty()) return;
+			DelTop();
+			text->setString(GetMsg());
+			ResetPos();
+		}
+
+		void ResetPos()
+		{
+			sf::FloatRect textBounds = text->getLocalBounds();
+			sf::Vector2f rectCenter(960.0f, 20.0f);
+			text->setPosition(sf::Vector2f(
+				rectCenter.x - textBounds.size.x / 2.0f - textBounds.position.x,
+				rectCenter.y - textBounds.size.y / 2.0f - textBounds.position.y
+			));
+		}
+
+		void draw(sf::RenderWindow* wnd)
+		{
+			if (messages.empty()) return;
+			wnd->draw(*text);
 		}
 	};
 }

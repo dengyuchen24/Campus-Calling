@@ -10,7 +10,8 @@
 dyc::Logger& logger = dyc::Logger::GetInstance("CampusCallingLog.txt");  // 日志输出变量
 std::map<std::string, sf::Font> g_Fonts;  // 字体变量
 dyc::WndManager* g_WndManager = nullptr;  // 窗口管理器变量
-int g_Coins = 1000;
+dyc::Message* g_Message;
+int g_Coins = 10;
 
 int main()
 {
@@ -22,6 +23,7 @@ int main()
 		window.setVerticalSyncEnabled(true);
 		g_WndManager = new dyc::WndManager();
 		g_Fonts["default"] = sf::Font("Assets/Fonts/Deng.ttf");  // 使用等线为默认字体
+		g_Message = new dyc::Message();
 
 		g_WndManager->SetWindow(&window);
 		g_WndManager->AddSfWnd("preparation window", std::make_unique<dyc::PreparationWnd>(g_WndManager));

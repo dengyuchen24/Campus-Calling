@@ -6,6 +6,7 @@ extern dyc::Logger& logger;
 extern dyc::WndManager* g_WndManager;
 extern std::map<std::string, sf::Font> g_Fonts;
 extern int g_Coins;
+extern dyc::Message* g_Message;
 
 DYC_BEGIN
 
@@ -75,7 +76,11 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 		sf::Vector2i pos = GetMousePos(event);
 		if (now_in)
 		{
-			if (g_Coins < mCost) return;
+			if (g_Coins < mCost)
+			{
+				g_Message->NewMsg(L"金币不足");
+				return;
+			}
 			set(0, L"sold", index);
 			mText->setString(L"Has been sold~");
 			mText->setOutlineColor(sf::Color::Transparent);
@@ -138,6 +143,7 @@ void ShopSystem::Refresh()
 {
 	if (g_Coins < 2)
 	{
+		g_Message->NewMsg(L"金币不足");
 		LOG_COUT("[MESSAGE] 金币不足");
 		return;
 	}
