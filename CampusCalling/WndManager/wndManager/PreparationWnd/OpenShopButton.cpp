@@ -18,6 +18,7 @@ OpenShopButton::OpenShopButton()
 	auto rect = GetAs<sf::RectangleShape>();
 	rect->setOutlineColor(sf::Color::Black);
 	rect->setOutlineThickness(2.0f);
+	rect->setFillColor(sf::Color::White);
 }
 
 void OpenShopButton::update(const std::optional<sf::Event>& event)

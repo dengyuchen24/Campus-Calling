@@ -28,7 +28,7 @@ namespace dyc
 	private:
 		std::vector<Student*> students;
 		std::vector<Teacher*> teachers;
-		std::vector<std::unique_ptr<Card>> hands;
+		std::vector<Card*> hands;
 		ActionQueue mQueue;
 
 		void logic() override;

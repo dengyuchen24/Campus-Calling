@@ -52,6 +52,8 @@ add_executable (CampusCalling
 	"WndManager/wndManager/PreparationWnd/OpenShopButton.cpp"
 	"WndManager/wndManager/PreparationWnd/ShopRefreshButton.h"
 	"WndManager/wndManager/PreparationWnd/ShopRefreshButton.cpp"
+	"WndManager/wndManager/PreparationWnd/PreparationSeat.h"
+	"WndManager/wndManager/PreparationWnd/PreparationSeat.cpp"
 )
 
 # -------------------------- 包含目录--------------------------

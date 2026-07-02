@@ -16,6 +16,8 @@ namespace dyc
 	using MouseMoved = sf::Event::MouseMoved;
 	using MouseButtonPressed = sf::Event::MouseButtonPressed;
 
+	class PreparationSeat;
+
 	/**
 	 * @brief 检查一个二维整数点是否位于给定的浮点数矩形区域内。
 	 *
@@ -115,11 +117,14 @@ namespace dyc
 		sf::RectangleShape border;
 	
 	public:
+		friend class PreparationSeat;
 		using WndObj::WndObj;
 		
 		bool SetTexture(const std::filesystem::path& path);  // 设置纹理
 
 		bool SetPosition(sf::Vector2f leftup);  // 设置纹理位置
+
+		void Move(sf::Vector2f delta);
 
 		// 设置缩放
 		// 当use_default为true时，scalex 和 scaley 都改为1.0f

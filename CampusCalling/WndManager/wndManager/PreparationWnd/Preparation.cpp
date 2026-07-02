@@ -4,6 +4,7 @@
 #include "ShopSystem.h"
 #include "OpenShopButton.h"
 #include "ShopRefreshButton.h"
+#include "PreparationSeat.h"
 
 DYC_BEGIN
 
@@ -29,6 +30,10 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 	// 商店开关按钮
 	AddObj(std::make_unique<OpenShopButton>(), "OpenShopButton");
 	LOG_COUT("[PASS] 商店开关按钮初始化完毕！");
+
+	// 备战席
+	AddObj(std::make_unique<PreparationSeat>(), "PreparationSeat");
+	LOG_COUT("[PASS] 备战席初始化完毕！");
 
 	LOG_COUT("[PASS] PreparationWnd 初始化完毕！");
 }

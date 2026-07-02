@@ -43,11 +43,16 @@ public:
 
 	void SetOpen(bool open);  // 设置是否开启
 
-	bool GetOpen() { return mIsOpen; }
+	bool GetOpen() const { return mIsOpen; }
 
 	void Refresh();  // 刷新商店
 
 	void update(const std::optional<sf::Event>& event) override;
+
+	void BuyCard(const std::wstring& name)
+	{
+		mCardPool[name]--;
+	}
 };
 
 DYC_END

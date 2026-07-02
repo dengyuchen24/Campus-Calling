@@ -1,5 +1,6 @@
 ﻿#include "ShopSystem.h"
 #include "OpenShopButton.h"
+#include "PreparationSeat.h"
 #include "../../../Helper.h"
 
 extern dyc::Logger& logger;
@@ -74,13 +75,32 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 	else if (event->is<sf::Event::MouseButtonPressed>())
 	{
 		sf::Vector2i pos = GetMousePos(event);
-		if (now_in)
+		if (!sold && now_in)
 		{
 			if (g_Coins < mCost)
 			{
 				g_Message->NewMsg(L"金币不足");
 				return;
 			}
+			else if (g_WndManager->running_wnd
+				->GetObjAs<PreparationSeat>("PreparationSeat")
+				->IsSeatFull())
+			{
+				g_Message->NewMsg(L"备战席已满");
+				return;
+			}
+
+
+			// TODO: 添加卡池减少一张牌，保证mCardPool中至少有一张牌
+			g_WndManager->running_wnd
+				->GetObjAs<ShopSystem>("ShopSystem")
+				->BuyCard(mName);
+
+			// TODO: 把购买的卡牌转移到玩家拥有
+			g_WndManager->running_wnd
+				->GetObjAs<PreparationSeat>("PreparationSeat")
+				->AddSeat(mName);
+
 			set(0, L"sold", index);
 			mText->setString(L"Has been sold~");
 			mText->setOutlineColor(sf::Color::Transparent);
@@ -89,8 +109,6 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 			g_Coins -= mCost;
 			g_WndManager->running_wnd
 				->GetObjAs<OpenShopButton>("OpenShopButton")->refresh();
-			// TODO: 添加卡池减少一张牌，保证mCardPool中至少有一张牌
-			// TODO: 把购买的卡牌转移到玩家拥有
 		}
 	}
 }
@@ -107,11 +125,11 @@ ShopSystem::ShopSystem() : WndObj()
 		return;
 	}
 	r->setPosition(sf::Vector2f(350.0f, 100.0f));
-	r->setFillColor(sf::Color::Transparent);
+	r->setFillColor(sf::Color::White);
 	r->setOutlineThickness(5.0f);
 	r->setOutlineColor(sf::Color::Black);
 
-	mCardPool[L"丝柯克"] = 10;
+	mCardPool[L"丝柯克"] = 100;  // TODO: 这里记得改
 
 	for (int i = 0; i < 5; ++i)
 	{
@@ -161,6 +179,7 @@ void ShopSystem::Refresh()
 		std::wstring name = RandomElement(mCardPool);
 
 		mCards[i]->set(mCardCost[name], name, i);
+		mCards[i]->sold = false;
 	}
 	LOG_COUT("[INFO] Shop refreshed!");
 }

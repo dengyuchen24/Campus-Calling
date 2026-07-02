@@ -11,7 +11,7 @@ dyc::Logger& logger = dyc::Logger::GetInstance("CampusCallingLog.txt");  // 日�
 std::map<std::string, sf::Font> g_Fonts;  // 字体变量
 dyc::WndManager* g_WndManager = nullptr;  // 窗口管理器变量
 dyc::Message* g_Message;
-int g_Coins = 10;
+int g_Coins = 1000;
 
 int main()
 {

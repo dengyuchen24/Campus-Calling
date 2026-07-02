@@ -114,6 +114,13 @@ bool WndCard::SetPosition(sf::Vector2f leftup)
 	return true;
 }
 
+void WndCard::Move(sf::Vector2f delta)
+{
+	auto pic = GetAs<sf::Sprite>();
+	auto pos = pic->getPosition();
+	pic->setPosition(pos + delta);
+}
+
 void WndCard::SetScale(float scalex, float scaley, bool use_default)
 {
 	auto sprite = GetAs<sf::Sprite>();
