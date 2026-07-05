@@ -8,6 +8,15 @@ extern int g_Coins;
 
 DYC_BEGIN
 
+Seat::Seat() : WndCard() {}
+
+Seat::SeatType GetSeatType(const std::wstring& str)
+{
+	if (str == L"丝柯克") return Seat::SeatType::CHARACTER;
+	else if (str == L"蔡曙优") return Seat::SeatType::CHARACTER;
+	return Seat::SeatType::NULLSEATTYPE;
+}
+
 PreparationSeat::PreparationSeat() : WndObj()
 {
 	SetDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(1500.0f, 187.5f)));
@@ -16,11 +25,77 @@ PreparationSeat::PreparationSeat() : WndObj()
 	mSeat->setOutlineColor(sf::Color::Black);
 	mSeat->setOutlineThickness(2.0f);
 	mSeat->setPosition(sf::Vector2f(208.0f, 888.5f));
+
+	for (float x = 715.0f; x < 1205.0f; x += 170.0f)
+	{
+		mBlocks.push_back({ x, 430.0f });
+	}
+	for (float x = 420.0f; x < 1500.0f; x += 155.0f)
+	{
+		mBlocks.push_back({ x, 650.0f });
+	}
+	for (float x = 210.0f; x < 1710.0f; x += 150.0f)
+	{
+		mBlocks.push_back({ x, 890.0f });
+	}
+}
+
+int PreparationSeat::CountCards(int a, int b)
+{
+	int res = 0;
+	for (auto& [idx, val] : mPreparationSeat)
+	{
+		if (idx >= a && idx < b) ++res;
+		else if (idx >= b) break;
+	}
+	return res;
 }
 
 void PreparationSeat::draw(sf::RenderWindow* wnd)
 {
 	WndObj::draw(wnd);
+
+	static sf::RectangleShape rectangle({ 150.0f, 200.0f });
+	static bool RectInit = false;
+	if (!RectInit)
+	{
+		RectInit = true;
+		rectangle.setFillColor(sf::Color::Transparent);
+		rectangle.setOutlineColor(sf::Color::Black);
+		rectangle.setOutlineThickness(1.0f);
+	}
+	bool open = g_WndManager->running_wnd->GetObjAs<ShopSystem>("ShopSystem")->GetOpen();
+	if (open)
+	{
+		for (float x = 715.0f; x < 1205.0f; x += 170.0f)
+		{
+			rectangle.setPosition(sf::Vector2f(x, 430.0f));
+			wnd->draw(rectangle);
+			mBlocks[(INDEX)((x - 715.0f) / 170.0f)] = { x, 430.0f };
+		}
+		for (float x = 420.0f; x < 1500.0f; x += 155.0f)
+		{
+			rectangle.setPosition(sf::Vector2f(x, 650.0f));
+			wnd->draw(rectangle);
+			mBlocks[(INDEX)((x - 420.0f) / 155.0f + 3)] = { x, 650.0f };
+		}
+	}
+	else
+	{
+		for (float x = 685.0f; x <= 1085.0f; x += 200.0f)
+		{
+			rectangle.setPosition(sf::Vector2f(x, 200.0f));
+			wnd->draw(rectangle);
+			mBlocks[(INDEX)((x - 685.0f) / 200.0f)] = { x, 200.0f };
+		}
+		for (float x = 400.0f; x < 1520.0f; x += 160.0f)
+		{
+			rectangle.setPosition(sf::Vector2f(x, 500.0f));
+			wnd->draw(rectangle);
+			mBlocks[(INDEX)((x - 400.0f) / 160.0f + 3)] = { x, 500.0f };
+		}
+	}
+
 	static sf::Vertex line[] = {
 	sf::Vertex({0, 0}, sf::Color::Black),  // 起点 + 颜色
 	sf::Vertex({0, 0}, sf::Color::Black)   // 终点 + 颜色
@@ -28,32 +103,57 @@ void PreparationSeat::draw(sf::RenderWindow* wnd)
 	for (float x = 360.0f; x < 1710.0f; x += 150.0f)
 	{
 		line[0].position = { x, 890.0f };
-		line[1].position = { x, 1080.0f };
+		line[1].position = { x, 1078.0f };
 		wnd->draw(line, 2, sf::PrimitiveType::Lines);
 	}
 	for (auto& c : mPreparationSeat)
 	{
-		if (c.second) c.second->draw(wnd);
+		if (c.second)
+		{
+			if (holding_card != c.second.get())
+				c.second->GetAs<sf::Sprite>()
+					->setPosition
+					(mBlocks[c.first] + sf::Vector2f(5.0f, 9.375f));
+			c.second->draw(wnd);
+		}
 	}
+
+	static sf::Text text(g_Fonts["default"]);
+	bool TextInit = false;
+	if (!TextInit)
+	{
+		TextInit = true;
+		text.setFillColor(sf::Color::Black);
+	}
+	text.setCharacterSize(20U);
+	text.setString(L"备战席 " + std::to_wstring(CountCards(10, 20)) + L"/10");
+	text.setPosition({ 210.0f, 865.0f });
+	wnd->draw(text);
+	text.setString(L"出战席 " + std::to_wstring(CountCards(0, 10)) + L"/" + std::to_wstring(max_front));
+	text.setCharacterSize(40U);
+	text.setPosition({ 15.0f, 100.0f });
+	wnd->draw(text);
 }
 
-void PreparationSeat::AddSeat(const std::wstring& name)
+void PreparationSeat::AddSeat(const std::wstring& name, Seat::SeatType type)
 {
-	float idx = (float)mPreparationSeat.size();
-	if ((int)idx >= max_seat) return;
-	std::unique_ptr<WndCard> NewCard =
-		std::make_unique<WndCard>();
+	float idx = (float)CountCards(10, 20);
+	if ((int)idx >= 10) return;
+	std::unique_ptr<Seat> NewCard =
+		std::make_unique<Seat>();
 	NewCard->SetTexture(L"Assets/Pictures/" + name + L".png");
 	NewCard->SetScale(0.34f, 0.34f);
 	NewCard->SetPosition(sf::Vector2f(215.0f + idx * 150, 899.375f));
+	NewCard->mSeatType = type;
 	mPreparationSeat[SeatNum()] = std::move(NewCard);
 }
 
 int PreparationSeat::SeatNum() const
 {
-	int last = 0;
+	int last = 10;
 	for (auto& p : mPreparationSeat)
 	{
+		if (p.first < 10) continue;
 		if (p.first != last) break;
 		else ++last;
 	}
@@ -62,7 +162,7 @@ int PreparationSeat::SeatNum() const
 
 bool PreparationSeat::IsSeatFull() const
 {
-	return SeatNum() >= max_seat;
+	return SeatNum() >= 20;
 }
 
 void PreparationSeat::update(const std::optional<sf::Event>& event)
@@ -75,15 +175,25 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 		holding_card->Move(sf::Vector2f(dx, dy));
 		mouse_last_pos = pos;
 	}
+
+	if (!event.has_value())
+		return;
+
 	if (event->is<MouseButtonPressed>())
 	{
 		auto pos = GetMousePos(event);
 		if (!holding_card)
 		{
-			if (pos.y >= 890 && pos.x >= 210 && pos.x <= 1710)
+			for (auto& c : mPreparationSeat)
 			{
-				int idx = (pos.x - 210) / 150;
-				holding_card = mPreparationSeat[idx].get();
+				sf::FloatRect rect =
+					c.second->GetAs <sf::Sprite>()->getGlobalBounds();
+				if (PointInRect(pos, rect))
+				{
+					holding_card = c.second.get();
+					card_last_idx = c.first;
+					break;
+				}
 			}
 		}
 		mouse_last_pos = pos;
@@ -92,6 +202,80 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 	{
 		auto pos = GetMousePos(event);
 		if (!holding_card) return;
+
+		auto hpos = holding_card->GetAs<sf::Sprite>()->getPosition();
+
+		int idx = 0;
+		bool processed = false;
+		for (auto& block : mBlocks)
+		{
+			float x = block.x + 5.0f;
+			float y = block.y + 9.375f;
+			if (std::abs(x - hpos.x) < 75.0f && std::abs(y - hpos.y) < 75.0f)
+			{
+				if (!mPreparationSeat.contains(idx))
+				{
+					LOG_COUT("[DEBUG] " << card_last_idx << " to " << idx);
+					LOG_COUT("[DEBUG] count cards: " << CountCards(0, 10));
+					if (card_last_idx >= 10 && idx < 10 && CountCards(0, 10) >= max_front) break;
+					LOG_COUT("[DEBUG] Allow to put");
+					if (Seat* seat = dynamic_cast<Seat*>(holding_card))
+					{
+						LOG_COUT("[DEBUG] seat is good");
+						if (seat->mSeatType == Seat::SeatType::CARD && idx < 3)
+						{
+							g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
+							break;
+						}
+						if (seat->mSeatType == Seat::SeatType::CHARACTER && idx > 2 && idx < 10)
+						{
+							g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
+							break;
+						}
+					}
+					else break;
+					mPreparationSeat[idx] = std::move(mPreparationSeat[card_last_idx]);
+					auto ptr = mPreparationSeat[idx].get();
+					ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
+					mPreparationSeat.erase(card_last_idx);
+					LOG_COUT("[DEBUG] Successful to put");
+				}
+				else
+				{
+					if (Seat* seat = dynamic_cast<Seat*>(holding_card))
+					{
+						LOG_COUT("[DEBUG] seat is good");
+						if (seat->mSeatType == Seat::SeatType::CARD && idx < 3)
+						{
+							g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
+							break;
+						}
+						if (seat->mSeatType == Seat::SeatType::CHARACTER && idx > 2 && idx < 10)
+						{
+							g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
+							break;
+						}
+					}
+					else break;
+					std::unique_ptr<Seat> ptr = std::move(mPreparationSeat[idx]);
+					mPreparationSeat[idx] = std::move(mPreparationSeat[card_last_idx]);
+					mPreparationSeat[card_last_idx] = std::move(ptr);
+					auto _ptr = mPreparationSeat[idx].get();
+					_ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
+					auto __ptr = mPreparationSeat[card_last_idx].get();
+					__ptr->GetAs<sf::Sprite>()->setPosition(mBlocks[card_last_idx] + sf::Vector2f(5.0f, 9.375f));
+					LOG_COUT("[DEBUG] Successful to change");
+				}
+				processed = true;
+				break;
+			}
+			++idx;
+		}
+		if (!processed)
+		{
+			holding_card->GetAs<sf::Sprite>()->setPosition(mBlocks[card_last_idx] + sf::Vector2f(5.0f, 9.375f));
+		}
+
 		holding_card = nullptr;
 		// TODO: 完成释放鼠标后卡牌的落位
 		mouse_last_pos = pos;

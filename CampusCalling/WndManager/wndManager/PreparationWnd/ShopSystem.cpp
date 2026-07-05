@@ -8,6 +8,7 @@ extern dyc::WndManager* g_WndManager;
 extern std::map<std::string, sf::Font> g_Fonts;
 extern int g_Coins;
 extern dyc::Message* g_Message;
+extern std::map<std::wstring, dyc::Seat::SeatType> SeatTypeMap;
 
 DYC_BEGIN
 
@@ -99,7 +100,7 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 			// TODO: 把购买的卡牌转移到玩家拥有
 			g_WndManager->running_wnd
 				->GetObjAs<PreparationSeat>("PreparationSeat")
-				->AddSeat(mName);
+				->AddSeat(mName, GetSeatType(mName));
 
 			set(0, L"sold", index);
 			mText->setString(L"Has been sold~");
@@ -128,6 +129,7 @@ ShopSystem::ShopSystem() : WndObj()
 	r->setFillColor(sf::Color::White);
 	r->setOutlineThickness(5.0f);
 	r->setOutlineColor(sf::Color::Black);
+	SetUiOrder(-3);
 
 	mCardPool[L"丝柯克"] = 100;  // TODO: 这里记得改
 

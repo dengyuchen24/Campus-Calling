@@ -7,22 +7,43 @@
 
 DYC_BEGIN
 
+using INDEX = const unsigned __int64;
+
+class Seat : public WndCard
+{
+public:
+	Seat();
+	enum class SeatType : int
+	{
+		NULLSEATTYPE = 0,
+		CHARACTER = 1,
+		CARD = 2
+	};
+
+	SeatType mSeatType = SeatType::NULLSEATTYPE;  // 牌的类型
+};
+
+inline Seat::SeatType GetSeatType(const std::wstring& str);
+
 class PreparationSeat : public WndObj
 {
 private:
-	std::vector<std::pair<int, std::wstring>> mGoFighting;  // 出战队员和卡牌{int: 1 为队员，2 为卡牌}
-	int max_students = 3, max_hands = 5;
-	int max_seat = 10;
-	std::map<int, std::unique_ptr<WndCard>> mPreparationSeat;  // 备战席
+	// idx 0~2 出战角色 3~9 出战卡牌 10~19 备战席
+	std::map<int, std::unique_ptr<Seat>> mPreparationSeat;
 	WndCard* holding_card = nullptr;
 	sf::Vector2i mouse_last_pos;
+	std::vector<sf::Vector2f> mBlocks;
+	int card_last_idx = -1;
+
+	int CountCards(int a, int b);  // mPreparationSeat的索引在a~b之间的个数（包括a不包括b）
 
 public:
+	int max_front = 5;
 	PreparationSeat();
 
 	void draw(sf::RenderWindow* wnd) override;
 
-	void AddSeat(const std::wstring& name);
+	void AddSeat(const std::wstring& name, Seat::SeatType type = Seat::SeatType::NULLSEATTYPE);
 
 	int SeatNum() const;  // 返回第一个空位的索引
 
