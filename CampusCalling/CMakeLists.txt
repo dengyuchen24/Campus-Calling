@@ -54,7 +54,7 @@ add_executable (CampusCalling
 	"WndManager/wndManager/PreparationWnd/ShopRefreshButton.cpp"
 	"WndManager/wndManager/PreparationWnd/PreparationSeat.h"
 	"WndManager/wndManager/PreparationWnd/PreparationSeat.cpp"
-)
+ "WndManager/wndManager/PreparationWnd/UpgradeLevel.h" "WndManager/wndManager/PreparationWnd/UpgradeLevel.cpp")
 
 # -------------------------- 包含目录--------------------------
 # 使用 target_include_directories 为当前目标设置头文件路径

@@ -5,6 +5,7 @@
 #include "OpenShopButton.h"
 #include "ShopRefreshButton.h"
 #include "PreparationSeat.h"
+#include "UpgradeLevel.h"
 
 DYC_BEGIN
 
@@ -16,8 +17,6 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 	// 开始游戏按钮
 	AddObj(std::make_unique<StartGameButton>(), "StartGameButton");
 	LOG_COUT("[PASS] 开始游戏按钮初始化完毕！");
-
-	// TODO: 备战席等元素
 
 	// 商店
 	AddObj(std::make_unique<ShopSystem>(), "ShopSystem");
@@ -34,6 +33,10 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 	// 备战席
 	AddObj(std::make_unique<PreparationSeat>(), "PreparationSeat");
 	LOG_COUT("[PASS] 备战席初始化完毕！");
+
+	// 升级按钮
+	AddObj(std::make_unique<UpgradeLevel>(), "UpgradeLevel");
+	LOG_COUT("[PASS] 升级按钮初始化完毕！");
 
 	LOG_COUT("[PASS] PreparationWnd 初始化完毕！");
 }
@@ -57,6 +60,15 @@ void PreparationWnd::logic()
 	else if (!shoprefreshbutton->mouse_in && shoprefreshbutton->mouse_in_last)
 		shoprefreshbutton->GetAs<sf::RectangleShape>()
 		->setFillColor(sf::Color::White);
+
+	// 等级升级按钮
+	auto upgradelevel = GetObjAs<UpgradeLevel>("UpgradeLevel");
+	if (upgradelevel->mouse_in && !upgradelevel->mouse_in_last)
+		upgradelevel->GetAs<sf::RectangleShape>()
+		->setOutlineColor(sf::Color::Black);
+	else if (!upgradelevel->mouse_in && upgradelevel->mouse_in_last)
+		upgradelevel->GetAs<sf::RectangleShape>()
+		->setOutlineColor(sf::Color::White);
 }
 
 DYC_END

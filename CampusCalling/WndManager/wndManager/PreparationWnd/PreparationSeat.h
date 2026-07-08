@@ -9,21 +9,23 @@ DYC_BEGIN
 
 using INDEX = const unsigned __int64;
 
+enum class SeatType : int
+{
+	NULLSEATTYPE = 0,
+	CHARACTER = 1,
+	CARD = 2
+};
+
 class Seat : public WndCard
 {
 public:
 	Seat();
-	enum class SeatType : int
-	{
-		NULLSEATTYPE = 0,
-		CHARACTER = 1,
-		CARD = 2
-	};
 
 	SeatType mSeatType = SeatType::NULLSEATTYPE;  // 牌的类型
+	int mcost = 0;
 };
 
-inline Seat::SeatType GetSeatType(const std::wstring& str);
+SeatType GetSeatType(const std::wstring& str);
 
 class PreparationSeat : public WndObj
 {
@@ -34,6 +36,7 @@ private:
 	sf::Vector2i mouse_last_pos;
 	std::vector<sf::Vector2f> mBlocks;
 	int card_last_idx = -1;
+	bool will_be_sold = false;
 
 	int CountCards(int a, int b);  // mPreparationSeat的索引在a~b之间的个数（包括a不包括b）
 
@@ -41,9 +44,11 @@ public:
 	int max_front = 5;
 	PreparationSeat();
 
+	~PreparationSeat();
+
 	void draw(sf::RenderWindow* wnd) override;
 
-	void AddSeat(const std::wstring& name, Seat::SeatType type = Seat::SeatType::NULLSEATTYPE);
+	void AddSeat(const std::wstring& name, SeatType type = SeatType::NULLSEATTYPE, int cost = 0);
 
 	int SeatNum() const;  // 返回第一个空位的索引
 

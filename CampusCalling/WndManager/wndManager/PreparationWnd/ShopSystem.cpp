@@ -8,7 +8,6 @@ extern dyc::WndManager* g_WndManager;
 extern std::map<std::string, sf::Font> g_Fonts;
 extern int g_Coins;
 extern dyc::Message* g_Message;
-extern std::map<std::wstring, dyc::Seat::SeatType> SeatTypeMap;
 
 DYC_BEGIN
 
@@ -100,7 +99,7 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 			// TODO: 把购买的卡牌转移到玩家拥有
 			g_WndManager->running_wnd
 				->GetObjAs<PreparationSeat>("PreparationSeat")
-				->AddSeat(mName, GetSeatType(mName));
+				->AddSeat(mName, GetSeatType(mName), mCost);
 
 			set(0, L"sold", index);
 			mText->setString(L"Has been sold~");

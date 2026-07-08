@@ -1,4 +1,5 @@
 ﻿#include "PreparationSeat.h"
+#include "OpenShopButton.h"
 
 extern dyc::Logger& logger;  // 日志输出变量
 extern std::map<std::string, sf::Font> g_Fonts;  // 字体变量
@@ -10,11 +11,11 @@ DYC_BEGIN
 
 Seat::Seat() : WndCard() {}
 
-Seat::SeatType GetSeatType(const std::wstring& str)
+SeatType GetSeatType(const std::wstring& str)
 {
-	if (str == L"丝柯克") return Seat::SeatType::CHARACTER;
-	else if (str == L"蔡曙优") return Seat::SeatType::CHARACTER;
-	return Seat::SeatType::NULLSEATTYPE;
+	if (str == L"丝柯克") return SeatType::CHARACTER;
+	else if (str == L"蔡曙优") return SeatType::CHARACTER;
+	return SeatType::NULLSEATTYPE;
 }
 
 PreparationSeat::PreparationSeat() : WndObj()
@@ -119,12 +120,7 @@ void PreparationSeat::draw(sf::RenderWindow* wnd)
 	}
 
 	static sf::Text text(g_Fonts["default"]);
-	bool TextInit = false;
-	if (!TextInit)
-	{
-		TextInit = true;
-		text.setFillColor(sf::Color::Black);
-	}
+	text.setFillColor(sf::Color::Black);
 	text.setCharacterSize(20U);
 	text.setString(L"备战席 " + std::to_wstring(CountCards(10, 20)) + L"/10");
 	text.setPosition({ 210.0f, 865.0f });
@@ -133,9 +129,19 @@ void PreparationSeat::draw(sf::RenderWindow* wnd)
 	text.setCharacterSize(40U);
 	text.setPosition({ 15.0f, 100.0f });
 	wnd->draw(text);
+	if (will_be_sold)
+	{
+		text.setString(L"松开鼠标按键即可出售");
+		text.setFillColor(sf::Color::Red);
+		text.setCharacterSize(20U);
+		text.setPosition({ 15.0f, 800.0f });
+		wnd->draw(text);
+		text.setPosition({ 1680.0f, 800.0f });
+		wnd->draw(text);
+	}
 }
 
-void PreparationSeat::AddSeat(const std::wstring& name, Seat::SeatType type)
+void PreparationSeat::AddSeat(const std::wstring& name, SeatType type, int cost)
 {
 	float idx = (float)CountCards(10, 20);
 	if ((int)idx >= 10) return;
@@ -145,6 +151,7 @@ void PreparationSeat::AddSeat(const std::wstring& name, Seat::SeatType type)
 	NewCard->SetScale(0.34f, 0.34f);
 	NewCard->SetPosition(sf::Vector2f(215.0f + idx * 150, 899.375f));
 	NewCard->mSeatType = type;
+	NewCard->mcost = cost;
 	mPreparationSeat[SeatNum()] = std::move(NewCard);
 }
 
@@ -173,6 +180,16 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 		float dx = static_cast<float>(pos.x - mouse_last_pos.x);
 		float dy = static_cast<float>(pos.y - mouse_last_pos.y);
 		holding_card->Move(sf::Vector2f(dx, dy));
+		if ((pos.x < 150 || pos.x > 1770) && pos.y > 880)
+		{
+			holding_card->SetBorder(5.0f, sf::Color::Red);
+			will_be_sold = true;
+		}
+		else
+		{
+			holding_card->SetBorder();
+			will_be_sold = false;
+		}
 		mouse_last_pos = pos;
 	}
 
@@ -200,86 +217,115 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 	}
 	else if (event->is<sf::Event::MouseButtonReleased>())
 	{
-		auto pos = GetMousePos(event);
+		auto pos = sf::Mouse::getPosition(*g_WndManager->GetWnd());
 		if (!holding_card) return;
 
 		auto hpos = holding_card->GetAs<sf::Sprite>()->getPosition();
 
 		int idx = 0;
 		bool processed = false;
-		for (auto& block : mBlocks)
+		if ((pos.x < 150 || pos.x > 1770) && pos.y > 880)
 		{
-			float x = block.x + 5.0f;
-			float y = block.y + 9.375f;
-			if (std::abs(x - hpos.x) < 75.0f && std::abs(y - hpos.y) < 75.0f)
+			int delete_idx = card_last_idx;
+
+			int cost = dynamic_cast<Seat*>(holding_card)->mcost;
+
+			holding_card = nullptr;
+
+			mPreparationSeat.erase(delete_idx);
+
+			g_Coins += cost;
+			g_WndManager->running_wnd->GetObjAs<OpenShopButton>("OpenShopButton")
+				->SetText(L"商店 $" + std::to_wstring(g_Coins));
+			will_be_sold = false;
+			processed = true;
+		}
+		else
+		{
+			for (auto& block : mBlocks)
 			{
-				if (!mPreparationSeat.contains(idx))
+				float x = block.x + 5.0f;
+				float y = block.y + 9.375f;
+				if (std::abs(x - hpos.x) < 75.0f && std::abs(y - hpos.y) < 75.0f)
 				{
-					LOG_COUT("[DEBUG] " << card_last_idx << " to " << idx);
-					LOG_COUT("[DEBUG] count cards: " << CountCards(0, 10));
-					if (card_last_idx >= 10 && idx < 10 && CountCards(0, 10) >= max_front) break;
-					LOG_COUT("[DEBUG] Allow to put");
-					if (Seat* seat = dynamic_cast<Seat*>(holding_card))
+					if (!mPreparationSeat.contains(idx))
 					{
-						LOG_COUT("[DEBUG] seat is good");
-						if (seat->mSeatType == Seat::SeatType::CARD && idx < 3)
+						LOG_COUT("[DEBUG] " << card_last_idx << " to " << idx);
+						LOG_COUT("[DEBUG] count cards: " << CountCards(0, 10));
+						if (card_last_idx >= 10 && idx < 10 && CountCards(0, 10) >= max_front) break;
+						LOG_COUT("[DEBUG] Allow to put");
+						if (Seat* seat = dynamic_cast<Seat*>(holding_card))
 						{
-							g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
-							break;
+							LOG_COUT("[DEBUG] seat is good");
+							if (seat->mSeatType == SeatType::CARD && idx < 3)
+							{
+								g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
+								break;
+							}
+							if (seat->mSeatType == SeatType::CHARACTER && idx > 2 && idx < 10)
+							{
+								g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
+								break;
+							}
 						}
-						if (seat->mSeatType == Seat::SeatType::CHARACTER && idx > 2 && idx < 10)
-						{
-							g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
-							break;
-						}
+						else break;
+						mPreparationSeat[idx] = std::move(mPreparationSeat[card_last_idx]);
+						auto ptr = mPreparationSeat[idx].get();
+						ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
+						mPreparationSeat.erase(card_last_idx);
+						LOG_COUT("[DEBUG] Successful to put");
 					}
-					else break;
-					mPreparationSeat[idx] = std::move(mPreparationSeat[card_last_idx]);
-					auto ptr = mPreparationSeat[idx].get();
-					ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
-					mPreparationSeat.erase(card_last_idx);
-					LOG_COUT("[DEBUG] Successful to put");
-				}
-				else
-				{
-					if (Seat* seat = dynamic_cast<Seat*>(holding_card))
+					else
 					{
-						LOG_COUT("[DEBUG] seat is good");
-						if (seat->mSeatType == Seat::SeatType::CARD && idx < 3)
+						if (Seat* seat = dynamic_cast<Seat*>(holding_card))
 						{
-							g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
-							break;
+							LOG_COUT("[DEBUG] seat is good");
+							if (seat->mSeatType == SeatType::CARD && idx < 3)
+							{
+								g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
+								break;
+							}
+							if (seat->mSeatType == SeatType::CHARACTER && idx > 2 && idx < 10)
+							{
+								g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
+								break;
+							}
 						}
-						if (seat->mSeatType == Seat::SeatType::CHARACTER && idx > 2 && idx < 10)
-						{
-							g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
-							break;
-						}
+						else break;
+						std::unique_ptr<Seat> ptr = std::move(mPreparationSeat[idx]);
+						mPreparationSeat[idx] = std::move(mPreparationSeat[card_last_idx]);
+						mPreparationSeat[card_last_idx] = std::move(ptr);
+						auto _ptr = mPreparationSeat[idx].get();
+						_ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
+						auto __ptr = mPreparationSeat[card_last_idx].get();
+						__ptr->GetAs<sf::Sprite>()->setPosition(mBlocks[card_last_idx] + sf::Vector2f(5.0f, 9.375f));
+						LOG_COUT("[DEBUG] Successful to change");
 					}
-					else break;
-					std::unique_ptr<Seat> ptr = std::move(mPreparationSeat[idx]);
-					mPreparationSeat[idx] = std::move(mPreparationSeat[card_last_idx]);
-					mPreparationSeat[card_last_idx] = std::move(ptr);
-					auto _ptr = mPreparationSeat[idx].get();
-					_ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
-					auto __ptr = mPreparationSeat[card_last_idx].get();
-					__ptr->GetAs<sf::Sprite>()->setPosition(mBlocks[card_last_idx] + sf::Vector2f(5.0f, 9.375f));
-					LOG_COUT("[DEBUG] Successful to change");
+					processed = true;
+					break;
 				}
-				processed = true;
-				break;
+				++idx;
 			}
-			++idx;
 		}
 		if (!processed)
 		{
 			holding_card->GetAs<sf::Sprite>()->setPosition(mBlocks[card_last_idx] + sf::Vector2f(5.0f, 9.375f));
 		}
 
-		holding_card = nullptr;
-		// TODO: 完成释放鼠标后卡牌的落位
+		if (holding_card) holding_card = nullptr;
+		// TODO: 完成释放鼠标后卡牌的落位（角色穿戴装备牌）
 		mouse_last_pos = pos;
 	}
+}
+
+PreparationSeat::~PreparationSeat()
+{
+	holding_card = nullptr;
+	will_be_sold = false;
+
+	mPreparationSeat.clear();
+
+	mBlocks.clear();
 }
 
 DYC_END
