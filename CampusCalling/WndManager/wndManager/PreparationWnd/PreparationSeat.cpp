@@ -21,10 +21,12 @@ CardType Seat::GetInfo() const
 	}
 }
 
+// TODO: 把所有角色和卡牌分类
 SeatType GetSeatType(const std::wstring& str)
 {
 	if (str == L"丝柯克") return SeatType::CHARACTER;
 	else if (str == L"蔡曙优") return SeatType::CHARACTER;
+	else if (str == L"lll") return SeatType::CARD;
 	return SeatType::NULLSEATTYPE;
 }
 
@@ -282,11 +284,12 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 								g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
 								break;
 							}
-							if (seat->mSeatType == SeatType::CHARACTER)
+							if (seat->mSeatType == SeatType::CHARACTER && idx < 3)
 							{
 								bool bk = false;
 								for (auto& [i, c] : mPreparationSeat)
 								{
+									if (i == card_last_idx) continue;
 									if (i > 2) { bk = false; break; }
 									if (c->cardname == seat->cardname)
 									{
@@ -328,21 +331,24 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 								g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
 								break;
 							}
-							if (seat->mSeatType == SeatType::CHARACTER)
+							if (seat->mSeatType == SeatType::CHARACTER && idx < 3)
 							{
-								bool bk = false;
-								for (auto& [i, c] : mPreparationSeat)
+								if (card_last_idx > 2)
 								{
-									if (i == idx) continue;
-									if (i > 2) { bk = false; break; }
-									if (c->cardname == seat->cardname)
+									bool bk = false;
+									for (auto& [i, c] : mPreparationSeat)
 									{
-										g_Message->NewMsg(L"不可以同时出战相同的角色");
-										bk = true;
-										break;
+										if (i == idx) continue;
+										if (i > 2) { bk = false; break; }
+										if (c->cardname == seat->cardname)
+										{
+											g_Message->NewMsg(L"不可以同时出战相同的角色");
+											bk = true;
+											break;
+										}
 									}
+									if (bk) break;
 								}
-								if (bk) break;
 							}
 						}
 						else break;

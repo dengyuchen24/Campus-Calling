@@ -40,10 +40,9 @@ private:
 	std::vector<sf::Vector2f> mBlocks;
 	int card_last_idx = -1;
 	bool will_be_sold = false;
-
-	int CountCards(int a, int b);  // mPreparationSeat的索引在a~b之间的个数（包括a不包括b）
-
 public:
+	int CountCards(int a, int b);  // mPreparationSeat的索引在 [a, b) 之间的个数
+
 	int max_front = 5;
 	PreparationSeat();
 

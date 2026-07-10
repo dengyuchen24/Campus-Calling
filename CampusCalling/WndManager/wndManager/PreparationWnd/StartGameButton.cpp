@@ -1,6 +1,8 @@
 ﻿#include "StartGameButton.h"
+#include "PreparationSeat.h"
 
 extern std::map<std::string, sf::Font> g_Fonts;
+extern dyc::Message* g_Message;
 
 DYC_BEGIN
 
@@ -36,6 +38,11 @@ void StartGameButton::update(const std::optional<sf::Event>& event)
 		sf::FloatRect r = rect->getGlobalBounds();
 		if (PointInRect(mouse_pos, r))
 		{
+			if (g_WndManager->running_wnd->GetObjAs<PreparationSeat>("PreparationSeat")->CountCards(0, 3) == 0)
+			{
+				g_Message->NewMsg(L"不可以出战，出战席最少需要有一个角色");
+				return;
+			}
 			if (!g_WndManager->GetSfWnd()->contains("game window"))
 				g_WndManager->AddSfWnd("game window", std::make_unique<dyc::GameWnd>(g_WndManager));
 			LOG_COUT("[DEBUG] Game Wnd: " << g_WndManager->GetSfWnd()->at("game window").get());
