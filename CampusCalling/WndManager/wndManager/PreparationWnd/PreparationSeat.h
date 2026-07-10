@@ -7,7 +7,7 @@
 
 DYC_BEGIN
 
-using INDEX = const unsigned __int64;
+using INDEX = unsigned __int64;
 
 enum class SeatType : int
 {
