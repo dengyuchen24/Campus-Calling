@@ -23,6 +23,9 @@ public:
 
 	SeatType mSeatType = SeatType::NULLSEATTYPE;  // 牌的类型
 	int mcost = 0;
+	std::wstring cardname;
+	CardType GetInfo() const;  // 获取卡牌信息（如果是卡牌的话，返回CardType）
+	std::wstring equipment_name;  // 如果是角色，储存装备信息
 };
 
 SeatType GetSeatType(const std::wstring& str);

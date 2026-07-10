@@ -80,7 +80,7 @@ void UpgradeLevel::update(const std::optional<sf::Event>& event)
 						need_experience = 60;
 						break;
 					case 9:
-						need_experience = 80;
+						need_experience = 78;
 						break;
 					}
 				}

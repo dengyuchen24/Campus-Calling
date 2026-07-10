@@ -11,6 +11,16 @@ DYC_BEGIN
 
 Seat::Seat() : WndCard() {}
 
+// TODO: 把所有装备牌在GetInfo完善
+CardType Seat::GetInfo() const
+{
+	if (mSeatType != SeatType::CARD) throw "If seat isn't a card but a character, it doesn't have a card type.";
+	if (cardname == L"lll")
+	{
+		return CardType::EQUIPMENT;
+	}
+}
+
 SeatType GetSeatType(const std::wstring& str)
 {
 	if (str == L"丝柯克") return SeatType::CHARACTER;
@@ -224,6 +234,7 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 
 		int idx = 0;
 		bool processed = false;
+		// 角色牌卖钱，其他卡牌不卖钱
 		if ((pos.x < 150 || pos.x > 1770) && pos.y > 880)
 		{
 			int delete_idx = card_last_idx;
@@ -252,7 +263,11 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 					{
 						LOG_COUT("[DEBUG] " << card_last_idx << " to " << idx);
 						LOG_COUT("[DEBUG] count cards: " << CountCards(0, 10));
-						if (card_last_idx >= 10 && idx < 10 && CountCards(0, 10) >= max_front) break;
+						if (card_last_idx >= 10 && idx < 10 && CountCards(0, 10) >= max_front)
+						{
+							g_Message->NewMsg(L"出战席已满");
+							break;
+						}
 						LOG_COUT("[DEBUG] Allow to put");
 						if (Seat* seat = dynamic_cast<Seat*>(holding_card))
 						{
@@ -266,6 +281,21 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 							{
 								g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
 								break;
+							}
+							if (seat->mSeatType == SeatType::CHARACTER)
+							{
+								bool bk = false;
+								for (auto& [i, c] : mPreparationSeat)
+								{
+									if (i > 2) { bk = false; break; }
+									if (c->cardname == seat->cardname)
+									{
+										g_Message->NewMsg(L"不可以同时出战相同的角色");
+										bk = true;
+										break;
+									}
+								}
+								if (bk) break;
 							}
 						}
 						else break;
@@ -282,6 +312,14 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 							LOG_COUT("[DEBUG] seat is good");
 							if (seat->mSeatType == SeatType::CARD && idx < 3)
 							{
+								if (seat->GetInfo() == CardType::EQUIPMENT && mPreparationSeat.at(idx)->equipment_name.empty())
+								{
+									mPreparationSeat.at(idx)->equipment_name = seat->cardname;
+									holding_card = nullptr;
+									mPreparationSeat.erase(card_last_idx);
+									processed = true;
+									break;
+								}
 								g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
 								break;
 							}
@@ -289,6 +327,22 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 							{
 								g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
 								break;
+							}
+							if (seat->mSeatType == SeatType::CHARACTER)
+							{
+								bool bk = false;
+								for (auto& [i, c] : mPreparationSeat)
+								{
+									if (i == idx) continue;
+									if (i > 2) { bk = false; break; }
+									if (c->cardname == seat->cardname)
+									{
+										g_Message->NewMsg(L"不可以同时出战相同的角色");
+										bk = true;
+										break;
+									}
+								}
+								if (bk) break;
 							}
 						}
 						else break;
@@ -313,7 +367,6 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 		}
 
 		if (holding_card) holding_card = nullptr;
-		// TODO: 完成释放鼠标后卡牌的落位（角色穿戴装备牌）
 		mouse_last_pos = pos;
 	}
 }

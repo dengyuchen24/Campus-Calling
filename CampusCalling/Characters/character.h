@@ -108,7 +108,6 @@ namespace dyc
 	{
 	protected:
 		Card* mEquipment = nullptr;
-		std::vector<Card*> mHeadDown;
 		float max_focus_bonus_ = 0.0f;  // 最大专注度加成（health）
 		int stealth_ = 0;  // 隐蔽值（攻击力）
 		float lucky_rate_ = 0.5f;  // 幸运一击率

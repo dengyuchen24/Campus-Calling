@@ -130,7 +130,7 @@ ShopSystem::ShopSystem() : WndObj()
 	r->setOutlineColor(sf::Color::Black);
 	SetUiOrder(-3);
 
-	mCardPool[L"丝柯克"] = 100;  // TODO: 这里记得改
+	mCardPool[L"丝柯克"] = 100;  // TODO: mCardPool初始化
 
 	for (int i = 0; i < 5; ++i)
 	{
