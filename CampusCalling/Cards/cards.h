@@ -2,6 +2,7 @@
 
 #include <string>
 #include "../WndManager/sfWindow.h"
+#include "../Characters/char_reader.h"
 
 class Character;
 
@@ -9,18 +10,14 @@ namespace dyc
 {
 	enum class CardType : int
 	{
-		LISTENING = 1,
-		HOMEWORK,
-		EQUIPMENT,
-		EVENT
+		EQUIPMENT = 1,
+		EVENT = 2
 	};
 
-	class Card : public WndObj
+	class Card : public WndCard
 	{
 	public:
-		std::string mName;
-		CardType mCardType;
-		virtual std::string Description() = 0;
+		_Card* card;
 		virtual void UseCard(Character* user, Character* target) = 0;
 	};
 }

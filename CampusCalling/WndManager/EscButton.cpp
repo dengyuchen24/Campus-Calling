@@ -8,17 +8,17 @@ DYC_BEGIN
 EscButton::EscButton()
 	: WndButton(g_Fonts.at("default"))
 {
-	LOG_COUT("[INFO] EscButton开始创建！");
+	
 	mText->setString(L"退出游戏 ×");
 	mText->setCharacterSize(20U);
-	LOG_COUT("[PASS] 设置文字内容为退出");
+	
 	SetButtonSize({ 100.0f, 50.0f });
 	SetButtonPosition({ 1800.0f, 50.0 });
-	LOG_COUT("[PASS] 设置位置成功");
+	
 	auto rect = GetAs<sf::RectangleShape>();
 	if (!rect)
 	{
-		LOG_COUT("[ERROR] 创建失败");
+		
 		return;
 	}
 	rect->setFillColor(sf::Color::Transparent);
@@ -32,7 +32,7 @@ void EscButton::update(const std::optional<sf::Event>& event)
 	{
 		if (!mouse_in) return;
 		g_WndManager->SetRunning(nullptr);
-        LOG_COUT("[INFO] 已退出游戏");
+        
 	}
 	else if (event->is<sf::Event::MouseMoved>())
 	{

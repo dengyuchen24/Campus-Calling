@@ -8,7 +8,7 @@ extern dyc::Message* g_Message;
 dyc::sfWindow::sfWindow(WndManager* m)
 {
 	if (m) { manager = m; window = m->GetWnd(); }
-	else { LOG_CERR("[ERROR] Creating sfWindow, wnd must not be nullptr."); }
+	else {  }
     AddObj(std::make_unique<EscButton>(), "EscButton");
 }
 
@@ -75,14 +75,14 @@ bool WndCard::SetTexture(const std::filesystem::path& path)
 {
 	if (!texture.loadFromFile(path))
 	{
-		LOG_COUT("[ERROR] Can't load texture from " << path);
+		
 		return false;
 	}
 	texture.setSmooth(true);
 	SetDrawable(std::make_unique<sf::Sprite>(texture));
 	sf::Sprite* sprite = GetAs<sf::Sprite>();
 	sprite->setPosition(sf::Vector2f(0, 0));
-	LOG_COUT("[INFO] Texture: " << path << " loaded successfully!");
+	
 	return true;
 }
 
@@ -91,7 +91,7 @@ WndObj* sfWindow::GetObj(const std::string& str)
 	for (auto& obj : objects)
 		if (obj->GetID() == obj_id_map.at(str))
 			return obj.get();
-	LOG_COUT("[ERROR] Object with str " << str << " not found!");
+	
 	return nullptr;
 }
 
@@ -126,7 +126,7 @@ void WndCard::SetScale(float scalex, float scaley, bool use_default)
 	auto sprite = GetAs<sf::Sprite>();
 	if (!sprite)
 	{
-		LOG_COUT("[ERROR] WndCard::SetTexturePosition() failed!");
+		
 		return;
 	}
 	if (use_default)
@@ -159,13 +159,13 @@ void WndButton::SetButtonPosition(sf::Vector2f leftup)
 	auto rect = GetAs<sf::RectangleShape>();
 	if (!rect)
 	{
-		LOG_COUT("[ERROR] WndButton::SetButtonPosition() failed!");
+		
 		return;
 	}
 	rect->setPosition(leftup);
-	LOG_COUT("[PASS] Button position set successfully");
+	
 	updateTextPosition();
-	LOG_COUT("[PASS] Button position update successfully");
+	
 }
 
 void WndButton::SetButtonSize(sf::Vector2f size)
@@ -178,31 +178,31 @@ void WndButton::SetButtonSize(sf::Vector2f size)
 void WndButton::updateTextPosition()
 {
 	// 设置文字在矩形中居中
-	LOG_COUT("[INFO] Updating text position...");
+	
 	auto rect = GetAs<sf::RectangleShape>();
-	LOG_COUT("[INFO] Get rect: " << rect);
-	LOG_COUT("[INFO] Get text: " << mText);
+	
+	
 	if (!rect || !mText)
 	{
-		LOG_COUT("[ERROR] WndButton::updateTextPosition() failed!");
+		
 		return;
 	}
 	// sf::Text::getFont() 返回 const sf::Font*。如果返回 nullptr，说明字体未设置或已失效。
 	if (mText->getFont().getInfo().family.empty())
 	{
-		LOG_COUT("[ERROR] Font is not set or invalid for mText!");
+		
 		// 这里可以选择设置一个默认字体，或者直接返回
 		mText->setFont(g_Fonts.at("default"));
 		return;
 	}
 	sf::FloatRect textBounds = mText->getLocalBounds();
 	sf::Vector2f rectCenter = rect->getPosition() + rect->getSize() / 2.0f;
-	LOG_COUT("[INFO] Before mText->setPosition() is ok.");
+	
 	mText->setPosition(sf::Vector2f(
 		rectCenter.x - textBounds.size.x / 2.0f - textBounds.position.x,
 		rectCenter.y - textBounds.size.y / 2.0f - textBounds.position.y
 	));
-	LOG_COUT("[PASS] Text position update successfully");
+	
 }
 
 void WndButton::draw(sf::RenderWindow* wnd)

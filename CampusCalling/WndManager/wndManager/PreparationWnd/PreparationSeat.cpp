@@ -19,6 +19,7 @@ CardType Seat::GetInfo() const
 	{
 		return CardType::EQUIPMENT;
 	}
+	return CardType::EVENT;
 }
 
 // TODO: 把所有角色和卡牌分类
@@ -263,17 +264,17 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 				{
 					if (!mPreparationSeat.contains(idx))
 					{
-						LOG_COUT("[DEBUG] " << card_last_idx << " to " << idx);
-						LOG_COUT("[DEBUG] count cards: " << CountCards(0, 10));
+						
+						
 						if (card_last_idx >= 10 && idx < 10 && CountCards(0, 10) >= max_front)
 						{
 							g_Message->NewMsg(L"出战席已满");
 							break;
 						}
-						LOG_COUT("[DEBUG] Allow to put");
+						
 						if (Seat* seat = dynamic_cast<Seat*>(holding_card))
 						{
-							LOG_COUT("[DEBUG] seat is good");
+							
 							if (seat->mSeatType == SeatType::CARD && idx < 3)
 							{
 								g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
@@ -306,13 +307,13 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 						auto ptr = mPreparationSeat[idx].get();
 						ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
 						mPreparationSeat.erase(card_last_idx);
-						LOG_COUT("[DEBUG] Successful to put");
+						
 					}
 					else
 					{
 						if (Seat* seat = dynamic_cast<Seat*>(holding_card))
 						{
-							LOG_COUT("[DEBUG] seat is good");
+							
 							if (seat->mSeatType == SeatType::CARD && idx < 3)
 							{
 								if (seat->GetInfo() == CardType::EQUIPMENT && mPreparationSeat.at(idx)->equipment_name.empty())
@@ -359,7 +360,7 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 						_ptr->GetAs<sf::Sprite>()->setPosition({ x, y });
 						auto __ptr = mPreparationSeat[card_last_idx].get();
 						__ptr->GetAs<sf::Sprite>()->setPosition(mBlocks[card_last_idx] + sf::Vector2f(5.0f, 9.375f));
-						LOG_COUT("[DEBUG] Successful to change");
+						
 					}
 					processed = true;
 					break;
@@ -385,6 +386,11 @@ PreparationSeat::~PreparationSeat()
 	mPreparationSeat.clear();
 
 	mBlocks.clear();
+}
+
+const std::map<int, std::unique_ptr<Seat>>& PreparationSeat::GetSeat() const
+{
+	return mPreparationSeat;
 }
 
 DYC_END

@@ -56,6 +56,8 @@ public:
 
 	bool IsSeatFull() const;
 
+	const std::map<int, std::unique_ptr<Seat>>& GetSeat() const;
+
 	void update(const std::optional<sf::Event>& event) override;
 };
 

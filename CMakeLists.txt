@@ -13,3 +13,7 @@ project ("CampusCalling" VERSION 1.0.0)
 
 # 包含子项目。
 add_subdirectory ("CampusCalling")
+
+if(MSVC)
+    target_compile_options(CampusCalling PRIVATE /utf-8)
+endif()

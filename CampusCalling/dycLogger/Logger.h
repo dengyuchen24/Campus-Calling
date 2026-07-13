@@ -1,8 +1,6 @@
 ﻿// Logger.hpp 日志头文件
 #pragma once
 
-// #define NCONSOLE  // 是否使用控制台输出
-
 #include <fstream>
 #include <string>
 #include <chrono>
@@ -11,16 +9,6 @@
 #include <condition_variable>
 #include <atomic>
 #include <vector>
-
-#ifndef NCONSOLE
-	#include <iostream>
-	// 绝对不允许使用逗号，否则加括号或报错
-	#define LOG_COUT(msg) std::cout << "-> " << msg << "\n"
-	#define LOG_CERR(msg) std::cerr << "-> " << msg << "\n"
-#else
-	#define LOG_COUT(msg) ((void)0)
-	#define LOG_CERR(msg) ((void)0)
-#endif
 
 #define DYC_BEGIN namespace dyc {
 #define DYC_END }

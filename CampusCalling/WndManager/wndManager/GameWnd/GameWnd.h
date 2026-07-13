@@ -20,7 +20,8 @@ namespace dyc
 		void add(Character* c);  // 需要手动sort
 		void sort();
 		bool empty();
-		std::vector<Character*>& GetQueue() { return queue; }
+		void clear();
+		const std::vector<Character*>& GetQueue() const;
 	};
 
 	class GameWnd : public sfWindow
@@ -28,12 +29,13 @@ namespace dyc
 	private:
 		std::vector<Student*> students;
 		std::vector<Teacher*> teachers;
-		std::vector<Card*> hands;
+		std::vector<Card*> hands;  // 手牌
 		ActionQueue mQueue;
 
 		void logic() override;
 
 	public:
 		GameWnd(WndManager* m);
+		void SetChar(std::vector<WndCard*> s, std::vector<WndCard*> c, std::vector<WndCard*> t);
 	};
 }

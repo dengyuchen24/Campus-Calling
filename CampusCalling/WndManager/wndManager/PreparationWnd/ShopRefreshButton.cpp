@@ -11,17 +11,17 @@ DYC_BEGIN
 ShopRefreshButton::ShopRefreshButton()
 	: WndButton(g_Fonts.at("default"))
 {
-	LOG_COUT("[INFO] ShopRefreshButton开始创建！");
+	
 	mText->setString(L"$2→刷新");
-	LOG_COUT("[PASS] 设置文字内容完成");
+	
 	mText->setCharacterSize(25U);
 	SetButtonSize({ 200.0f, 55.0f });
 	SetButtonPosition({ 1350.0f, 450.0 });
-	LOG_COUT("[PASS] 设置位置成功");
+	
 	auto rect = GetAs<sf::RectangleShape>();
 	if (!rect)
 	{
-		LOG_COUT("[ERROR] 创建失败");
+		
 		return;
 	}
 	rect->setFillColor(sf::Color::White);

@@ -8,6 +8,8 @@
 #include <vector>
 #include <concepts>
 #include <fstream>
+#include <string>
+#include <windows.h>
 
 DYC_BEGIN
 
@@ -108,5 +110,49 @@ private:
 	std::chrono::time_point<CLOCK> end_time;
 	std::vector<long long> durations;
 };
+
+// 将 UTF‑8 std::string 转换为 UTF‑16 std::wstring
+inline std::wstring dto_wstring(const std::string& utf8str) {
+	if (utf8str.empty()) return {};
+
+	// 计算所需缓冲区大小（含终止符）
+	int len = MultiByteToWideChar(CP_UTF8, 0, utf8str.data(),
+		static_cast<int>(utf8str.size()), nullptr, 0);
+	if (len == 0) {
+		throw std::runtime_error("MultiByteToWideChar failed to calculate size.");
+	}
+
+	std::wstring result(len, L'\0');
+	int converted = MultiByteToWideChar(CP_UTF8, 0, utf8str.data(),
+		static_cast<int>(utf8str.size()),
+		result.data(), len);
+	if (converted == 0) {
+		throw std::runtime_error("MultiByteToWideChar conversion failed.");
+	}
+	return result;  // C++11 起保证返回的 string 不含多余空字符
+}
+
+// 将 UTF‑16 std::wstring 转换为 UTF‑8 std::string
+inline std::string dto_string(const std::wstring& wstr) {
+	if (wstr.empty()) return {};
+
+	// 计算所需缓冲区大小（含终止符）
+	int len = WideCharToMultiByte(CP_UTF8, 0, wstr.data(),
+		static_cast<int>(wstr.size()), nullptr, 0,
+		nullptr, nullptr);
+	if (len == 0) {
+		throw std::runtime_error("WideCharToMultiByte failed to calculate size.");
+	}
+
+	std::string result(len, '\0');
+	int converted = WideCharToMultiByte(CP_UTF8, 0, wstr.data(),
+		static_cast<int>(wstr.size()),
+		result.data(), len,
+		nullptr, nullptr);
+	if (converted == 0) {
+		throw std::runtime_error("WideCharToMultiByte conversion failed.");
+	}
+	return result;
+}
 
 DYC_END

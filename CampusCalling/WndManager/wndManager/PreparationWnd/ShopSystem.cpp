@@ -96,7 +96,6 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 				->GetObjAs<ShopSystem>("ShopSystem")
 				->BuyCard(mName);
 
-			// TODO: 把购买的卡牌转移到玩家拥有
 			g_WndManager->running_wnd
 				->GetObjAs<PreparationSeat>("PreparationSeat")
 				->AddSeat(mName, GetSeatType(mName), mCost);
@@ -121,7 +120,7 @@ ShopSystem::ShopSystem() : WndObj()
 	auto r = GetAs<sf::RectangleShape>();
 	if (!r)
 	{
-		LOG_COUT("[ERROR] ShopSystem: Failed to get drawable!");
+		
 		return;
 	}
 	r->setPosition(sf::Vector2f(350.0f, 100.0f));
@@ -139,7 +138,7 @@ ShopSystem::ShopSystem() : WndObj()
 		mCards.push_back(std::make_unique<SellingCard>(5, L"丝柯克", i));
 	}
 
-	LOG_COUT("[PASS] ShopSystem: Created!");
+	
 
 }
 
@@ -163,7 +162,7 @@ void ShopSystem::Refresh()
 	if (g_Coins < 2)
 	{
 		g_Message->NewMsg(L"金币不足");
-		LOG_COUT("[MESSAGE] 金币不足");
+		
 		return;
 	}
 	g_Coins -= 2;
@@ -171,7 +170,7 @@ void ShopSystem::Refresh()
 		->GetObjAs<OpenShopButton>("OpenShopButton")->refresh();
 	if (mCardPool.empty())
 	{
-		LOG_COUT("[WARNING] mCardPool is empty!");
+		
 		return;
 	}
 	for (int i = 0; i < 5; ++i)
@@ -182,7 +181,7 @@ void ShopSystem::Refresh()
 		mCards[i]->set(mCardCost[name], name, i);
 		mCards[i]->sold = false;
 	}
-	LOG_COUT("[INFO] Shop refreshed!");
+	
 }
 
 void ShopSystem::update(const std::optional<sf::Event>& event)

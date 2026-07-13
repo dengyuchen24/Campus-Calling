@@ -11,6 +11,11 @@
 
 extern std::map<std::string, sf::Font> g_Fonts;  // 字体变量
 
+#define GETOBJAS(_Ty) GetObjAs<_Ty>(#_Ty)
+#define GETOBJAS_var(_Ty) auto var_ ## _Ty = GETOBJAS(_Ty)
+#define NEWOBJ(_Ty) AddObj(std::make_unique<_Ty>(), #_Ty)
+#define STR(x) #x
+
 namespace dyc
 {
 	using MouseMoved = sf::Event::MouseMoved;
@@ -85,7 +90,6 @@ namespace dyc
 		virtual void draw(sf::RenderWindow* wnd)  // 绘制
 		{
 			if (wnd && drawable) wnd->draw(*drawable);
-			else LOG_COUT("[ERROR] wnd or drawable is nullptr");
 		}
 
 		virtual void update(const std::optional<sf::Event>& event) {}
@@ -175,7 +179,7 @@ namespace dyc
 		void draw()
 		{
 			for (auto& pObj : objects)
-				pObj->draw(window);
+				if (pObj) pObj->draw(window);
 		}
 		
 		void update(const std::optional<sf::Event>& event);
@@ -222,7 +226,7 @@ namespace dyc
 		sf::RenderWindow* GetWnd() const
 		{
 			if (window) return window;
-			LOG_COUT("[ERROR] WndManager's window is nullptr!");
+			
 			return nullptr;
 		}
 

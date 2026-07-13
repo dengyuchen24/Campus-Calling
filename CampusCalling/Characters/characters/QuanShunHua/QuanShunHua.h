@@ -4,7 +4,7 @@
 
 DYC_BEGIN
 
-class CaiShuYou : public Student
+class QuanShunHua : public Teacher
 {
 public:
 	void OnMyTurn() override;

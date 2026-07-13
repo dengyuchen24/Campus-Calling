@@ -20,18 +20,18 @@ void UpgradeLevel::SetLevel(int cur_, int max_)
 UpgradeLevel::UpgradeLevel()
 	: WndButton(g_Fonts.at("default"))
 {
-	LOG_COUT("[INFO] UpgradeLevel开始创建！");
+	
 	mText->setString(L"当前等级：Lv." + std::to_wstring(cur_level)
 		+ L"\n当前经验：\n" + std::to_wstring(cur_experience)  + L"/" + std::to_wstring(need_experience)
 		+ L"\n$4 → 4经验\n点击购买经验");
 	mText->setCharacterSize(40U);
 	SetButtonSize({ 320.0f, 240.0f });
 	SetButtonPosition({ 5.0f, 200.0f });
-	LOG_COUT("[PASS] 设置位置成功");
+	
 	auto rect = GetAs<sf::RectangleShape>();
 	if (!rect)
 	{
-		LOG_COUT("[ERROR] 创建失败");
+		
 		return;
 	}
 	rect->setFillColor(sf::Color::White);

@@ -1,26 +1,32 @@
 ﻿#include "StartGameButton.h"
 #include "PreparationSeat.h"
+#include "../../../Characters/character.h"
 
 extern std::map<std::string, sf::Font> g_Fonts;
 extern dyc::Message* g_Message;
 
 DYC_BEGIN
 
+static std::unique_ptr<WndCard> SeatToWndcard(Seat* seat)
+{
+	
+}
+
 StartGameButton::StartGameButton()
 	: WndButton(g_Fonts.at("default"))
 {
-	LOG_COUT("[INFO] StartGameButton开始创建！");
+	
 	mText->setString(L"出战 →");
-	LOG_COUT("[PASS] 设置文字内容为出战");
+	
 	mText->setCharacterSize(40U);
 	mText->setStyle(sf::Text::Bold);
 	SetButtonSize({ 260.0f, 80.0f });
 	SetButtonPosition({ 1600.0f, 690.0f });
-	LOG_COUT("[PASS] 设置位置成功");
+	
 	auto rect = GetAs<sf::RectangleShape>();
 	if (!rect)
 	{
-		LOG_COUT("[ERROR] 创建失败");
+		
 		return;
 	}
 	rect->setFillColor(sf::Color::Cyan);
@@ -45,8 +51,10 @@ void StartGameButton::update(const std::optional<sf::Event>& event)
 			}
 			if (!g_WndManager->GetSfWnd()->contains("game window"))
 				g_WndManager->AddSfWnd("game window", std::make_unique<dyc::GameWnd>(g_WndManager));
-			LOG_COUT("[DEBUG] Game Wnd: " << g_WndManager->GetSfWnd()->at("game window").get());
+			
+			const auto& chars = dynamic_cast<dyc::PreparationSeat*>(g_WndManager->running_wnd)->GetSeat();
 			g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("game window").get());
+			
 		}
 	}
 	else if (event->is<sf::Event::MouseMoved>())

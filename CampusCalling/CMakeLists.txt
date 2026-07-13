@@ -54,7 +54,12 @@ add_executable (CampusCalling
 	"WndManager/wndManager/PreparationWnd/ShopRefreshButton.cpp"
 	"WndManager/wndManager/PreparationWnd/PreparationSeat.h"
 	"WndManager/wndManager/PreparationWnd/PreparationSeat.cpp"
- "WndManager/wndManager/PreparationWnd/UpgradeLevel.h" "WndManager/wndManager/PreparationWnd/UpgradeLevel.cpp")
+	"WndManager/wndManager/PreparationWnd/UpgradeLevel.h"
+	"WndManager/wndManager/PreparationWnd/UpgradeLevel.cpp"
+	"Characters/characters/QuanShunHua/QuanShunHua.h"
+	"Characters/characters/QuanShunHua/QuanShunHua.cpp"
+	"Characters/char_reader.h"
+)
 
 # -------------------------- 包含目录--------------------------
 # 使用 target_include_directories 为当前目标设置头文件路径
@@ -79,7 +84,7 @@ target_link_libraries(CampusCalling PRIVATE
 	sfml-network${SFML_SUFFIX}
 )
 
-# set_target_properties(CampusCalling PROPERTIES WIN32_EXECUTABLE TRUE)
+set_target_properties(CampusCalling PROPERTIES WIN32_EXECUTABLE TRUE)
 
 # 适配 CMake 版本的 CXX_STANDARD 属性（原有逻辑保留）
 if (CMAKE_VERSION VERSION_GREATER 3.12)

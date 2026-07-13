@@ -12,62 +12,62 @@ DYC_BEGIN
 PreparationWnd::PreparationWnd(WndManager* mgr)
 	: sfWindow(mgr)
 {
-	LOG_COUT("[INFO] PreparationWnd 初始化开始！");
+	
 
 	// 开始游戏按钮
-	AddObj(std::make_unique<StartGameButton>(), "StartGameButton");
-	LOG_COUT("[PASS] 开始游戏按钮初始化完毕！");
+	NEWOBJ(StartGameButton);
+	
 
 	// 商店
-	AddObj(std::make_unique<ShopSystem>(), "ShopSystem");
-	LOG_COUT("[PASS] 商店初始化完毕！");
+	NEWOBJ(ShopSystem);
+	
 
     // 添加商店刷新按钮
-    AddObj(std::make_unique<ShopRefreshButton>(), "ShopRefreshButton");
-	LOG_COUT("[PASS] 商店刷新按钮初始化完毕！");
+	NEWOBJ(ShopRefreshButton);
+	
 
 	// 商店开关按钮
-	AddObj(std::make_unique<OpenShopButton>(), "OpenShopButton");
-	LOG_COUT("[PASS] 商店开关按钮初始化完毕！");
+	NEWOBJ(OpenShopButton);
+	
 
 	// 备战席
-	AddObj(std::make_unique<PreparationSeat>(), "PreparationSeat");
-	LOG_COUT("[PASS] 备战席初始化完毕！");
+	NEWOBJ(PreparationSeat);
+	
 
 	// 升级按钮
-	AddObj(std::make_unique<UpgradeLevel>(), "UpgradeLevel");
-	LOG_COUT("[PASS] 升级按钮初始化完毕！");
+	NEWOBJ(UpgradeLevel);
+	
 
-	LOG_COUT("[PASS] PreparationWnd 初始化完毕！");
+	
 }
 
 void PreparationWnd::logic()
 {
 	// 出战按钮
-	auto startgamebutton = GetObjAs<StartGameButton>("StartGameButton");
-	if (startgamebutton->mouse_in && !startgamebutton->mouse_in_last)
-		startgamebutton->GetAs<sf::RectangleShape>()
+	GETOBJAS_var(StartGameButton);
+	if (var_StartGameButton->mouse_in && !var_StartGameButton->mouse_in_last)
+		var_StartGameButton->GetAs<sf::RectangleShape>()
 		->setFillColor(sf::Color(255, 60, 0));
-	else if (!startgamebutton->mouse_in && startgamebutton->mouse_in_last)
-		startgamebutton->GetAs<sf::RectangleShape>()
+	else if (!var_StartGameButton->mouse_in && var_StartGameButton->mouse_in_last)
+		var_StartGameButton->GetAs<sf::RectangleShape>()
 		->setFillColor(sf::Color::Cyan);
 
 	// 商店刷新按钮
-	auto shoprefreshbutton = GetObjAs<ShopRefreshButton>("ShopRefreshButton");
-	if (shoprefreshbutton->mouse_in && !shoprefreshbutton->mouse_in_last)
-		shoprefreshbutton->GetAs<sf::RectangleShape>()
+	GETOBJAS_var(ShopRefreshButton);
+	if (var_ShopRefreshButton->mouse_in && !var_ShopRefreshButton->mouse_in_last)
+		var_ShopRefreshButton->GetAs<sf::RectangleShape>()
 		->setFillColor(sf::Color(240, 240, 240));
-	else if (!shoprefreshbutton->mouse_in && shoprefreshbutton->mouse_in_last)
-		shoprefreshbutton->GetAs<sf::RectangleShape>()
+	else if (!var_ShopRefreshButton->mouse_in && var_ShopRefreshButton->mouse_in_last)
+		var_ShopRefreshButton->GetAs<sf::RectangleShape>()
 		->setFillColor(sf::Color::White);
 
 	// 等级升级按钮
-	auto upgradelevel = GetObjAs<UpgradeLevel>("UpgradeLevel");
-	if (upgradelevel->mouse_in && !upgradelevel->mouse_in_last)
-		upgradelevel->GetAs<sf::RectangleShape>()
+	GETOBJAS_var(UpgradeLevel);
+	if (var_UpgradeLevel->mouse_in && !var_UpgradeLevel->mouse_in_last)
+		var_UpgradeLevel->GetAs<sf::RectangleShape>()
 		->setOutlineColor(sf::Color::Black);
-	else if (!upgradelevel->mouse_in && upgradelevel->mouse_in_last)
-		upgradelevel->GetAs<sf::RectangleShape>()
+	else if (!var_UpgradeLevel->mouse_in && var_UpgradeLevel->mouse_in_last)
+		var_UpgradeLevel->GetAs<sf::RectangleShape>()
 		->setOutlineColor(sf::Color::White);
 }
 
