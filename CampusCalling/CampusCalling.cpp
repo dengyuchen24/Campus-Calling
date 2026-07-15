@@ -15,13 +15,16 @@ std::map<std::string, _Student> g_Students;
 std::map<std::string, _Teacher> g_Teachers;
 std::map<std::string, _Effect> g_Effects;
 std::map<std::string, _Card> g_Cards;
+std::map<std::string, SkillFunction> g_SkillFunctionMap;  // 手动注册
 
-int WinMain()
+int main()
 {
 	try
 	{
 		
 		logger.log_info("CampusCalling 游戏程序启动！");
+		logger.log_info("开始加载数据...");
+
 		sf::RenderWindow window(sf::VideoMode({ 1920, 1080 }), "CampusCalling", sf::State::Fullscreen);
 		window.setVerticalSyncEnabled(true);
 		g_WndManager = new dyc::WndManager();
@@ -53,9 +56,13 @@ int WinMain()
 			g_Cards = parseArrayToMap<_Card>(root["cards"]);
 		}
 
+		logger.log_info("数据加载完毕");
+
 		g_WndManager->SetWindow(&window);
 		g_WndManager->AddSfWnd("preparation window", std::make_unique<dyc::PreparationWnd>(g_WndManager));
 		g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("preparation window").get());
+
+		logger.log_info("准备界面加载完毕");
 
 		g_WndManager->run();
 

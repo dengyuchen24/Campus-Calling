@@ -59,6 +59,10 @@ add_executable (CampusCalling
 	"Characters/characters/QuanShunHua/QuanShunHua.h"
 	"Characters/characters/QuanShunHua/QuanShunHua.cpp"
 	"Characters/char_reader.h"
+	"WndManager/wndManager/GameWnd/GameSeat.h"
+	"WndManager/wndManager/GameWnd/GameSeat.cpp"
+	"WndManager/wndManager/GameWnd/ActionQueue.h"
+	"WndManager/wndManager/GameWnd/ActionQueue.cpp"
 )
 
 # -------------------------- 包含目录--------------------------
@@ -84,7 +88,7 @@ target_link_libraries(CampusCalling PRIVATE
 	sfml-network${SFML_SUFFIX}
 )
 
-set_target_properties(CampusCalling PROPERTIES WIN32_EXECUTABLE TRUE)
+# set_target_properties(CampusCalling PROPERTIES WIN32_EXECUTABLE TRUE)
 
 # 适配 CMake 版本的 CXX_STANDARD 属性（原有逻辑保留）
 if (CMAKE_VERSION VERSION_GREATER 3.12)

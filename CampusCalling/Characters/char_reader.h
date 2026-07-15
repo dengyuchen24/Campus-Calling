@@ -3,8 +3,14 @@
 #include <string>
 #include <vector>
 #include <set>
+#include <functional>
+#include <any>
 
 #include "../json.hpp"
+
+class Character;
+
+using SkillFunction = std::function<void(Character* caster, Character* target, std::any data)>;
 
 struct _Skill
 {

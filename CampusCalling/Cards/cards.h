@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include <string>
 #include "../WndManager/sfWindow.h"
@@ -17,7 +17,8 @@ namespace dyc
 	class Card : public WndCard
 	{
 	public:
-		_Card* card;
-		virtual void UseCard(Character* user, Character* target) = 0;
+		Card(const std::string& name);
+		_Card* card = nullptr;
+		virtual void UseCard(Character* user, Character* target) {}
 	};
 }

@@ -1,38 +1,36 @@
 ﻿#include "PreparationSeat.h"
 #include "OpenShopButton.h"
+#include "../../../Helper.h"
 
 extern dyc::Logger& logger;  // 日志输出变量
 extern std::map<std::string, sf::Font> g_Fonts;  // 字体变量
 extern dyc::WndManager* g_WndManager;  // 窗口管理器变量
 extern dyc::Message* g_Message;
 extern int g_Coins;
+extern std::map<std::string, _Card> g_Cards;
+extern std::map<std::string, _Student> g_Students;
 
 DYC_BEGIN
 
 Seat::Seat() : WndCard() {}
 
-// TODO: 把所有装备牌在GetInfo完善
 CardType Seat::GetInfo() const
 {
 	if (mSeatType != SeatType::CARD) throw "If seat isn't a card but a character, it doesn't have a card type.";
-	if (cardname == L"lll")
-	{
-		return CardType::EQUIPMENT;
-	}
-	return CardType::EVENT;
+	return (CardType)g_Cards.at(dto_string(cardname)).cardtype;
 }
 
-// TODO: 把所有角色和卡牌分类
 SeatType GetSeatType(const std::wstring& str)
 {
-	if (str == L"丝柯克") return SeatType::CHARACTER;
-	else if (str == L"蔡曙优") return SeatType::CHARACTER;
-	else if (str == L"lll") return SeatType::CARD;
-	return SeatType::NULLSEATTYPE;
+	std::string n = dto_string(str);
+	if (g_Students.contains(n)) return SeatType::CHARACTER;
+	else if (g_Cards.contains(n)) return SeatType::CARD;
+	else return SeatType::NULLSEATTYPE;
 }
 
 PreparationSeat::PreparationSeat() : WndObj()
 {
+	logger.log_info("开始加载PreparationSeat...");
 	SetDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(1500.0f, 187.5f)));
 	auto mSeat = GetAs<sf::RectangleShape>();
 	mSeat->setFillColor(sf::Color::Transparent);
@@ -52,6 +50,7 @@ PreparationSeat::PreparationSeat() : WndObj()
 	{
 		mBlocks.push_back({ x, 890.0f });
 	}
+	logger.log_info("PreparationSeat加载完毕");
 }
 
 int PreparationSeat::CountCards(int a, int b)
@@ -160,6 +159,7 @@ void PreparationSeat::AddSeat(const std::wstring& name, SeatType type, int cost)
 	if ((int)idx >= 10) return;
 	std::unique_ptr<Seat> NewCard =
 		std::make_unique<Seat>();
+	NewCard->cardname = name;
 	NewCard->SetTexture(L"Assets/Pictures/" + name + L".png");
 	NewCard->SetScale(0.34f, 0.34f);
 	NewCard->SetPosition(sf::Vector2f(215.0f + idx * 150, 899.375f));
@@ -285,21 +285,16 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 								g_Message->NewMsg(L"不要把角色和卡牌位错位放置");
 								break;
 							}
-							if (seat->mSeatType == SeatType::CHARACTER && idx < 3)
+							if (seat->mSeatType == SeatType::CHARACTER && idx < 3 && card_last_idx >= 10)
 							{
-								bool bk = false;
-								for (auto& [i, c] : mPreparationSeat)
+								logger.log_info(dto_string(seat->cardname));
+								if ((mPreparationSeat.contains(0) && mPreparationSeat[0]->cardname == seat->cardname)
+									|| (mPreparationSeat.contains(1) && mPreparationSeat[1]->cardname == seat->cardname)
+									|| (mPreparationSeat.contains(2) && mPreparationSeat[2]->cardname == seat->cardname))
 								{
-									if (i == card_last_idx) continue;
-									if (i > 2) { bk = false; break; }
-									if (c->cardname == seat->cardname)
-									{
-										g_Message->NewMsg(L"不可以同时出战相同的角色");
-										bk = true;
-										break;
-									}
+									g_Message->NewMsg(L"不可以同时出战相同的角色");
+									break;
 								}
-								if (bk) break;
 							}
 						}
 						else break;
@@ -324,7 +319,7 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 									processed = true;
 									break;
 								}
-								g_Message->NewMsg(L"不要把卡牌和角色位错位放置");
+								g_Message->NewMsg(L"角色已穿戴装备");
 								break;
 							}
 							if (seat->mSeatType == SeatType::CHARACTER && idx > 2 && idx < 10)

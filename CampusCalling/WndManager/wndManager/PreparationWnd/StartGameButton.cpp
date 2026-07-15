@@ -3,6 +3,7 @@
 #include "../../../Characters/character.h"
 
 extern std::map<std::string, sf::Font> g_Fonts;
+extern dyc::Logger& logger;
 extern dyc::Message* g_Message;
 
 DYC_BEGIN
@@ -54,7 +55,10 @@ void StartGameButton::update(const std::optional<sf::Event>& event)
 			
 			const auto& chars = dynamic_cast<dyc::PreparationSeat*>(g_WndManager->running_wnd)->GetSeat();
 			g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("game window").get());
-			
+			// TODO: 把seat改成character和card
+			auto w = dynamic_cast<dyc::GameWnd*>(g_WndManager->running_wnd);
+			if (!w) logger.log_error("GameWnd is nullptr");
+			else w->Reset(chars, std::vector<std::string>());
 		}
 	}
 	else if (event->is<sf::Event::MouseMoved>())

@@ -7,6 +7,8 @@
 #include "PreparationSeat.h"
 #include "UpgradeLevel.h"
 
+extern dyc::Logger& logger;
+
 DYC_BEGIN
 
 PreparationWnd::PreparationWnd(WndManager* mgr)
@@ -16,11 +18,11 @@ PreparationWnd::PreparationWnd(WndManager* mgr)
 
 	// 开始游戏按钮
 	NEWOBJ(StartGameButton);
-	
+	logger.log_info("开始按钮创建成功");
 
 	// 商店
 	NEWOBJ(ShopSystem);
-	
+	logger.log_info("商店系统创建成功");
 
     // 添加商店刷新按钮
 	NEWOBJ(ShopRefreshButton);

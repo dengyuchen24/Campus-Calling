@@ -54,8 +54,6 @@ namespace dyc
 	public:
 		using WndCard::WndCard;
 
-		virtual std::wstring Description() = 0;
-
 		void SetExtra(ExtraKey key, std::any val);
 
 		// 获取可修改的指针
@@ -96,7 +94,7 @@ namespace dyc
 		float GetStrength() const;
 
 		// 处理自己的回合，但是用update函数处理玩家操作
-		virtual void OnMyTurn() = 0;
+		virtual void OnMyTurn() {}
 	};
 
 	class Student : public Character
@@ -110,15 +108,15 @@ namespace dyc
 		float heal_bonus_ = 0.0f;
 		float be_healed_bonus_ = 0.0f;
 		float break_val_bonus_ = 0.0f;
-		_Student* student;
-		Student(const std::wstring& name);
+		_Student* student = nullptr;
+		Student(const std::string& name);
 	};
 
 	class Teacher : public Character
 	{
 	public:
-		_Teacher* teacher;
-		Teacher(const std::wstring& name);
+		_Teacher* teacher = nullptr;
+		Teacher(const std::string& name);
 	};
 }
 

@@ -1,5 +1,9 @@
-#include "character.h"
+﻿#include "character.h"
 #include "../Helper.h"
+
+extern std::map<std::string, _Student> g_Students;
+extern std::map<std::string, _Teacher> g_Teachers;
+// extern std::map<std::string, _Effect> g_Effects;
 
 DYC_BEGIN
 
@@ -70,12 +74,12 @@ bool Character::IsDead() const { return cur_health <= 0; }
 
 float Character::GetStrength() const { return strength; }
 
-Student::Student(const std::wstring& name)
+Student::Student(const std::string& name)
 {
-
+	student = &g_Students[name];
 }
 
-Teacher::Teacher(const std::wstring& name)
+Teacher::Teacher(const std::string& name)
 {
 
 }

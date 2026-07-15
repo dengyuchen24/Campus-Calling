@@ -9,6 +9,7 @@ namespace dyc
 	class Teacher;
 	class Card;
 	class Character;
+	class Seat;
 
 	class ActionQueue
 	{
@@ -27,15 +28,17 @@ namespace dyc
 	class GameWnd : public sfWindow
 	{
 	private:
-		std::vector<Student*> students;
-		std::vector<Teacher*> teachers;
-		std::vector<Card*> hands;  // 手牌
+		std::vector<std::unique_ptr<Student>> students;
+		std::vector<std::unique_ptr<Teacher>> teachers;
+		std::vector<std::unique_ptr<Card>> hands;  // 手牌
 		ActionQueue mQueue;
 
 		void logic() override;
 
+		std::unique_ptr<Student> NewStudent(std::string name);
+
 	public:
 		GameWnd(WndManager* m);
-		void SetChar(std::vector<WndCard*> s, std::vector<WndCard*> c, std::vector<WndCard*> t);
+		void Reset(const std::map<int, std::unique_ptr<Seat>>& seats, std::vector<std::string> teachers);
 	};
 }

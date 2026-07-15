@@ -8,7 +8,6 @@ extern dyc::Message* g_Message;
 dyc::sfWindow::sfWindow(WndManager* m)
 {
 	if (m) { manager = m; window = m->GetWnd(); }
-	else {  }
     AddObj(std::make_unique<EscButton>(), "EscButton");
 }
 
@@ -238,7 +237,7 @@ void sfWindow::update(const std::optional<sf::Event>& event)
 	for (auto& obj : objects)
 	{
 		if (manager->running_wnd != this) break;
-		obj->update(event);
+		if (obj) obj->update(event);
 	}
 }
 

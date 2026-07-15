@@ -8,6 +8,8 @@ extern dyc::WndManager* g_WndManager;
 extern std::map<std::string, sf::Font> g_Fonts;
 extern int g_Coins;
 extern dyc::Message* g_Message;
+extern std::map<std::string, _Card> g_Cards;
+extern std::map<std::string, _Student> g_Students;
 
 DYC_BEGIN
 
@@ -90,8 +92,6 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 				return;
 			}
 
-
-			// TODO: 添加卡池减少一张牌，保证mCardPool中至少有一张牌
 			g_WndManager->running_wnd
 				->GetObjAs<ShopSystem>("ShopSystem")
 				->BuyCard(mName);
@@ -116,11 +116,11 @@ void SellingCard::update(const std::optional<sf::Event>& event)
 
 ShopSystem::ShopSystem() : WndObj()
 {
+	logger.log_info("ShopSystem开始初始化...");
 	SetDrawable(std::make_unique<sf::RectangleShape>(sf::Vector2f(1220.0f, 300.0f)));
 	auto r = GetAs<sf::RectangleShape>();
 	if (!r)
 	{
-		
 		return;
 	}
 	r->setPosition(sf::Vector2f(350.0f, 100.0f));
@@ -129,23 +129,40 @@ ShopSystem::ShopSystem() : WndObj()
 	r->setOutlineColor(sf::Color::Black);
 	SetUiOrder(-3);
 
-	mCardPool[L"丝柯克"] = 100;  // TODO: mCardPool初始化
+	mCardPool[L"丝柯克"] = 10;  // TODO: mCardPool初始化
 
-	for (int i = 0; i < 5; ++i)
+	for (auto& [n, v] : g_Students)
 	{
-		// TODO: 完成初始化商店中的卡牌
-		mCardCost[L"丝柯克"] = 5;
-		mCards.push_back(std::make_unique<SellingCard>(5, L"丝柯克", i));
+		mCardPool[dto_wstring(n)] = 9;
+		mCardCost[dto_wstring(n)] = v.cost;
+	}
+	for (auto& [n, v] : g_Cards)
+	{
+		mCardPool[dto_wstring(n)] = 5;
+		mCardCost[dto_wstring(n)] = v.cost;
 	}
 
-	
+	logger.log_info("mCardPool、mCardCost初始化完毕");
 
+	mCards.clear();
+	mCards.resize(5);
+	logger.log_info("mCards清空成功");
+	
+	for (int i = 0; i < 5; ++i)
+	{
+		std::wstring name = RandomElement(mCardPool);
+		mCards[i] = std::make_unique<SellingCard>(mCardCost[name], name, i);
+		mCards[i]->sold = false;
+	}
+	
+	logger.log_info("mCards初始化完毕");
+	logger.log_info("商店系统成功创建");
 }
 
 void ShopSystem::draw(sf::RenderWindow* wnd)
 {
 	if (!mIsOpen) return;
-    WndObj::draw(wnd);
+	WndObj::draw(wnd);
 	for (auto& obj : mCards)
 	{
 		obj->draw(wnd);

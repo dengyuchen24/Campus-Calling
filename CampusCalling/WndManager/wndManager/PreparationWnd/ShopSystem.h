@@ -51,7 +51,13 @@ public:
 
 	void BuyCard(const std::wstring& name)
 	{
-		mCardPool[name]--;
+		bool last = true;
+		for (auto& [n, v] : mCardPool)
+		{
+			if (v != 0) { last = false; break; }
+		}
+
+		if (!last) mCardPool[name]--;
 	}
 };
 
