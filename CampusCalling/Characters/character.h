@@ -41,6 +41,13 @@ namespace dyc
 
 	};
 
+	struct _Character
+	{
+		std::string name;
+		int star;
+		std::string extra;  // 学生用于储存装备信息，教师用于储存难度系数
+	};
+
 	class Character : public EffectTarget, public WndCard
 	{
 	protected:
@@ -109,14 +116,15 @@ namespace dyc
 		float be_healed_bonus_ = 0.0f;
 		float break_val_bonus_ = 0.0f;
 		_Student* student = nullptr;
-		Student(const std::string& name);
+		Student(const _Character& char_data);
 	};
 
 	class Teacher : public Character
 	{
 	public:
+		int difficulty = 1;  // 难度系数
 		_Teacher* teacher = nullptr;
-		Teacher(const std::string& name);
+		Teacher(const _Character& char_data);
 	};
 }
 

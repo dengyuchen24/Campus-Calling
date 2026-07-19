@@ -220,6 +220,7 @@ void dyc::Logger::Flush()
 void dyc::Logger::log_error(const std::string& content, bool with_time)
 {
 	log(std::string("[ERROR] ") + content, with_time);
+	Flush();  // 错误日志立即刷新
 }
 
 void dyc::Logger::log_info(const std::string& content, bool with_time)

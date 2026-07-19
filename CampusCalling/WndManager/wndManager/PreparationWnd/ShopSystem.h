@@ -49,16 +49,9 @@ public:
 
 	void update(const std::optional<sf::Event>& event) override;
 
-	void BuyCard(const std::wstring& name)
-	{
-		bool last = true;
-		for (auto& [n, v] : mCardPool)
-		{
-			if (v != 0) { last = false; break; }
-		}
+	void BuyCard(const std::wstring& name);
 
-		if (!last) mCardPool[name]--;
-	}
+	void SetCardPool(const std::wstring& name, int num);
 };
 
 DYC_END

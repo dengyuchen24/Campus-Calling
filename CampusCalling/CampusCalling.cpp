@@ -21,7 +21,6 @@ int main()
 {
 	try
 	{
-		
 		logger.log_info("CampusCalling 游戏程序启动！");
 		logger.log_info("开始加载数据...");
 

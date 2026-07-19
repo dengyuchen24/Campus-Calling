@@ -21,26 +21,11 @@ namespace dyc
 		return queue[0];
 	}
 
-	void ActionQueue::add(Character* c) { queue.push_back(c); }
-
-	void ActionQueue::sort()
-	{
-		std::sort(queue.begin(), queue.end(),
-			[](Character* a, Character* b)->bool
-			{ return a->GetMoveVal() < b->GetMoveVal(); });
-	}
-
-	bool ActionQueue::empty() { return queue.empty(); }
-
-	const std::vector<Character*>& ActionQueue::GetQueue() const { return queue; }
-
-	void ActionQueue::clear() { queue.clear(); }
-
 	void GameWnd::logic()
 	{
 		// 更新行动队列
 		
-		const std::vector<Character*>& queue = mQueue.GetQueue();
+		const std::vector<Character*>& queue = mQueue->GetQueue();
 		static std::wstring content;
 		content.clear();
 		int n = 0;
@@ -58,64 +43,61 @@ namespace dyc
 	GameWnd::GameWnd(WndManager* m) : sfWindow(m)
 	{
 		logger.log_info("GameWnd开始创建...");
-		// 行动队列
-		// 新建一个 WndObj 实例
-		std::unique_ptr<WndObj> obj = std::make_unique<WndObj>();
-		obj->SetUiOrder(-1);
 
-		std::unique_ptr<sf::Text> aq = std::make_unique<sf::Text>(g_Fonts.at("default"));
-		if (!aq)
+		NEWOBJ(ActionQueue);
 
-			// 现在obj有效，可以正常调用
-			obj->SetDrawable(std::move(aq));
-
-		auto text = obj->GetAs<sf::Text>();
-		if (!text)
-			text->setPosition({ 1500.0f, 0.0f });
-		text->setFillColor(sf::Color::Black);
-		text->setCharacterSize(30U);
-
-		AddObj(std::move(obj), "ActionQueue");
+		mQueue = GETOBJAS(ActionQueue);
 
 		logger.log_info("GameWnd创建完毕！");
 	}
 
-	std::unique_ptr<Student> GameWnd::NewStudent(std::string name)
-	{
-		if (!g_Students.contains(name))
-			return nullptr;
-		return std::make_unique<Student>(name);
-	}
-
 	void GameWnd::Reset
-	(const std::map<int, std::unique_ptr<Seat>>& seats
-		, std::vector<std::string> teachers
+	(std::map<int, _Character>& seats
+		, std::vector<_Character> teachers
 	)
 	{
+		logger.log_info("GameWnd::Reset() 被调用");
+
+		if (seats.empty()) {
+			logger.log_error("GameWnd::Reset() 收到的 seats 指针为空，放弃重置！");
+			return;
+		}
 		this->students.clear();
 		this->teachers.clear();
 		this->hands.clear();
-		mQueue.clear();
-		
+		if (mQueue) mQueue->clear();
+		logger.log_info("GameWnd::Reset() 清空了学生、老师、手牌和行动队列");
+		logger.log_info("GameWnd::Reset() seat.size() : " + std::to_string(seats.size()));
 		for (auto& [pos, val] : seats)
 		{
+			logger.log_info("pos: " + std::to_string(pos) + ", cardname: " + val.name);
 			if (pos >= 0 && pos < 3)
 			{
-				this->students.push_back(NewStudent(dto_string(val->cardname)));
-				mQueue.add(this->students.back().get());
+				this->students.push_back(std::make_unique<Student>(val));
+				if (!this->students.back())
+				{
+					logger.log_error("GameWnd::Reset() NewStudent失败，cardname: " + val.name);
+					continue;
+				}
+				mQueue->add(this->students.back().get());
 			}
 			else if (pos >= 3 && pos < 10)
 			{
-				this->hands.push_back(std::make_unique<Card>(dto_string(val->cardname)));
+				this->hands.push_back(std::make_unique<Card>(val.name));
 			}
 			else break;
 		}
 
+		logger.log_info("GameWnd::Reset() 添加了学生和手牌到GameWnd");
+
 		for (auto& n : teachers)
 		{
 			this->teachers.push_back(std::make_unique<Teacher>(n));
-			mQueue.add(this->teachers.back().get());
+			mQueue->add(this->teachers.back().get());
 		}
-		mQueue.sort();
+
+		logger.log_info("GameWnd::Reset() 添加了老师到GameWnd");
+		mQueue->sort();
+		logger.log_info("GameWnd::Reset() 行动队列已排序，已全部完成！");
 	}
 }

@@ -10,7 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # -------------------------- 配置 SFML 3.0 --------------------------
 # SFML 安装根目录
-set(SFML_ROOT "D:/Code/C++/SFML")
+set(SFML_ROOT "D:/Code/lib/SFML")
 
 # 根据编译类型（Debug/Release）选择对应的 SFML 库后缀
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")

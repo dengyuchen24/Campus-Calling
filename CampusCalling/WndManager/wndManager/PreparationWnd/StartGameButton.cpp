@@ -8,6 +8,8 @@ extern dyc::Message* g_Message;
 
 DYC_BEGIN
 
+struct _Character;
+
 static std::unique_ptr<WndCard> SeatToWndcard(Seat* seat)
 {
 	
@@ -53,12 +55,23 @@ void StartGameButton::update(const std::optional<sf::Event>& event)
 			if (!g_WndManager->GetSfWnd()->contains("game window"))
 				g_WndManager->AddSfWnd("game window", std::make_unique<dyc::GameWnd>(g_WndManager));
 			
-			const auto& chars = dynamic_cast<dyc::PreparationSeat*>(g_WndManager->running_wnd)->GetSeat();
+			const auto& chars = dynamic_cast<dyc::PreparationWnd*>(g_WndManager->running_wnd)->GETOBJAS(PreparationSeat)->GetSeat();
 			g_WndManager->SetRunning(g_WndManager->GetSfWnd()->at("game window").get());
-			// TODO: 把seat改成character和card
+			// TODO: 把Teacher的初始化也加上去
 			auto w = dynamic_cast<dyc::GameWnd*>(g_WndManager->running_wnd);
 			if (!w) logger.log_error("GameWnd is nullptr");
-			else w->Reset(chars, std::vector<std::string>());
+			else
+			{
+				logger.log_info("StartGameButton: Resetting GameWnd with characters");
+				std::map<int, _Character> s;
+				for (auto& [_id, _ch] : chars)
+				{
+					logger.log_info("StartGameButton: Adding character " + std::to_string(_id) + " to GameWnd");
+					s.emplace(_id, _ch->GetCharacter());
+				}
+				logger.log_info("StartGameButton: Resetting GameWnd with " + std::to_string(s.size()) + " characters");
+				w->Reset(s, std::vector<_Character>());
+			}
 		}
 	}
 	else if (event->is<sf::Event::MouseMoved>())

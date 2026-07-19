@@ -14,6 +14,11 @@ DYC_BEGIN
 
 Seat::Seat() : WndCard() {}
 
+_Character Seat::GetCharacter() const
+{
+	return _Character{ dto_string(cardname), star, equipment_name.empty() ? "" : dto_string(equipment_name) };
+}
+
 CardType Seat::GetInfo() const
 {
 	if (mSeatType != SeatType::CARD) throw "If seat isn't a card but a character, it doesn't have a card type.";
@@ -119,6 +124,11 @@ void PreparationSeat::draw(sf::RenderWindow* wnd)
 		line[1].position = { x, 1078.0f };
 		wnd->draw(line, 2, sf::PrimitiveType::Lines);
 	}
+	static sf::Text text(g_Fonts["default"]);
+	text.setFillColor(sf::Color::Yellow);
+	text.setOutlineColor(sf::Color::White);
+	text.setOutlineThickness(1.0f);
+	text.setCharacterSize(20U);
 	for (auto& c : mPreparationSeat)
 	{
 		if (c.second)
@@ -128,11 +138,18 @@ void PreparationSeat::draw(sf::RenderWindow* wnd)
 					->setPosition
 					(mBlocks[c.first] + sf::Vector2f(5.0f, 9.375f));
 			c.second->draw(wnd);
+			if (c.second->mSeatType != SeatType::CHARACTER) continue;
+			std::wstring star_str = L"";
+			for (int i = 0; i < c.second->star; ++i) star_str += L"★";
+			text.setPosition(c.second->GetAs<sf::Sprite>()->getPosition());
+			text.setString(star_str);
+			wnd->draw(text);
 		}
 	}
 
-	static sf::Text text(g_Fonts["default"]);
 	text.setFillColor(sf::Color::Black);
+	text.setOutlineThickness(0.0f);
+	text.setOutlineColor(sf::Color::Transparent);
 	text.setCharacterSize(20U);
 	text.setString(L"备战席 " + std::to_wstring(CountCards(10, 20)) + L"/10");
 	text.setPosition({ 210.0f, 865.0f });
@@ -155,6 +172,60 @@ void PreparationSeat::draw(sf::RenderWindow* wnd)
 
 void PreparationSeat::AddSeat(const std::wstring& name, SeatType type, int cost)
 {
+	bool done = false;
+	if (type == SeatType::CHARACTER)
+	{
+		for (int cur_star = 1; cur_star < 3; ++cur_star)
+		{
+			int counter = 0;
+			int i = -1;
+			int i2 = -1;
+			int i3 = -1;
+			for (auto& [idx, val] : mPreparationSeat)
+			{
+				if (val->cardname == name && val->star == cur_star)
+				{
+					++counter;
+					i = idx;
+					if (i2 == -1 && i3 != -1) i2 = idx;
+					if (i3 == -1) i3 = idx;
+				}
+			}
+			if (counter >= 2 && !done)
+			{
+				if (!mPreparationSeat[i3]->equipment_name.empty())
+				{
+					AddSeat(mPreparationSeat[i3]->equipment_name, SeatType::CARD, 0);
+				}
+				mPreparationSeat.erase(i3);
+				mPreparationSeat[i]->star = cur_star + 1;
+				mPreparationSeat[i]->mcost *= 3;
+				done = true;
+			}
+			else if (counter >= 3 && done)
+			{
+				if (!mPreparationSeat[i2]->equipment_name.empty())
+				{
+					AddSeat(mPreparationSeat[i2]->equipment_name, SeatType::CARD, 0);
+				}
+				mPreparationSeat.erase(i2);
+				if (!mPreparationSeat[i3]->equipment_name.empty())
+				{
+					AddSeat(mPreparationSeat[i3]->equipment_name, SeatType::CARD, 0);
+				}
+				mPreparationSeat.erase(i3);
+				mPreparationSeat[i]->star = cur_star + 1;
+				mPreparationSeat[i]->mcost *= 3;
+			}
+			else
+			{
+				break;
+			}
+		}
+	}
+
+	if (done) return;
+
 	float idx = (float)CountCards(10, 20);
 	if ((int)idx >= 10) return;
 	std::unique_ptr<Seat> NewCard =
@@ -221,6 +292,7 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 				if (PointInRect(pos, rect))
 				{
 					holding_card = c.second.get();
+					holding_card->SetUiOrder(-2);
 					card_last_idx = c.first;
 					break;
 				}
@@ -232,6 +304,7 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 	{
 		auto pos = sf::Mouse::getPosition(*g_WndManager->GetWnd());
 		if (!holding_card) return;
+		holding_card->SetUiOrder(0);
 
 		auto hpos = holding_card->GetAs<sf::Sprite>()->getPosition();
 
@@ -242,7 +315,11 @@ void PreparationSeat::update(const std::optional<sf::Event>& event)
 		{
 			int delete_idx = card_last_idx;
 
-			int cost = dynamic_cast<Seat*>(holding_card)->mcost;
+			auto _seat = dynamic_cast<Seat*>(holding_card);
+			int cost = _seat->mcost;
+
+			g_WndManager->running_wnd->GETOBJAS(ShopSystem)
+				->SetCardPool(_seat->cardname, static_cast<int>(std::pow(3, _seat->star - 1)));
 
 			holding_card = nullptr;
 

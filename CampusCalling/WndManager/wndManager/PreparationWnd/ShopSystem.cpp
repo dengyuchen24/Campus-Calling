@@ -129,11 +129,9 @@ ShopSystem::ShopSystem() : WndObj()
 	r->setOutlineColor(sf::Color::Black);
 	SetUiOrder(-3);
 
-	mCardPool[L"丝柯克"] = 10;  // TODO: mCardPool初始化
-
 	for (auto& [n, v] : g_Students)
 	{
-		mCardPool[dto_wstring(n)] = 9;
+		mCardPool[dto_wstring(n)] = 10;
 		mCardCost[dto_wstring(n)] = v.cost;
 	}
 	for (auto& [n, v] : g_Cards)
@@ -207,6 +205,22 @@ void ShopSystem::update(const std::optional<sf::Event>& event)
 	{
 		c->update(event);
 	}
+}
+
+void ShopSystem::BuyCard(const std::wstring& name)
+{
+	bool last = true;
+	for (auto& [n, v] : mCardPool)
+	{
+		if (v != 0) { last = false; break; }
+	}
+
+	if (!last) mCardPool[name]--;
+}
+
+void ShopSystem::SetCardPool(const std::wstring& name, int num)
+{
+	mCardPool.at(name) += num;
 }
 
 DYC_END

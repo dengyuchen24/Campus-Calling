@@ -74,14 +74,20 @@ bool Character::IsDead() const { return cur_health <= 0; }
 
 float Character::GetStrength() const { return strength; }
 
-Student::Student(const std::string& name)
+Student::Student(const _Character& char_data)
 {
-	student = &g_Students[name];
+	student = &g_Students.at(char_data.name);
+	strength *= char_data.star;
+	if (char_data.extra.empty()) return;
+	mEquipment = new Card(char_data.extra);
 }
 
-Teacher::Teacher(const std::string& name)
+Teacher::Teacher(const _Character& char_data)
 {
-
+	teacher = &g_Teachers.at(char_data.name);
+	strength *= char_data.star;
+	if (char_data.extra.empty()) return;
+	strength *= std::stoi(char_data.extra);
 }
 
 DYC_END

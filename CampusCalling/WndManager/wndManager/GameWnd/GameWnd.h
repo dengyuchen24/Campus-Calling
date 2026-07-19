@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "../../../Characters/character.h"
+#include "ActionQueue.h"
 
 namespace dyc
 {
@@ -10,20 +11,8 @@ namespace dyc
 	class Card;
 	class Character;
 	class Seat;
-
-	class ActionQueue
-	{
-	private:
-		std::vector<Character*> queue;
-
-	public:
-		Character* top();
-		void add(Character* c);  // 需要手动sort
-		void sort();
-		bool empty();
-		void clear();
-		const std::vector<Character*>& GetQueue() const;
-	};
+	class ActionQueue;
+	struct _Character;
 
 	class GameWnd : public sfWindow
 	{
@@ -31,14 +20,12 @@ namespace dyc
 		std::vector<std::unique_ptr<Student>> students;
 		std::vector<std::unique_ptr<Teacher>> teachers;
 		std::vector<std::unique_ptr<Card>> hands;  // 手牌
-		ActionQueue mQueue;
+		ActionQueue* mQueue = nullptr;
 
 		void logic() override;
 
-		std::unique_ptr<Student> NewStudent(std::string name);
-
 	public:
 		GameWnd(WndManager* m);
-		void Reset(const std::map<int, std::unique_ptr<Seat>>& seats, std::vector<std::string> teachers);
+		void Reset(std::map<int, _Character>& seats, std::vector<_Character> teachers);
 	};
 }
